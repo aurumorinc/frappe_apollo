@@ -1,0 +1,99 @@
+interactions:
+- request:
+    body: '{"label": "Test External Field VCR", "type": "string", "modality": "contact"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '77'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: POST
+    uri: https://api.apollo.io/api/v1/fields
+  response:
+    body:
+      string: '{"fields":[{"id":"contact.6a0ce38ff0c9f6000c9b728b","category":"person","context":["crm_push","csv_export","finder","prompt","settings","snippets","followup_email","formula"],"description":null,"editable":false,"example":null,"field_name":"contact.Test
+        External Field VCR","group":null,"icon_class":null,"label":"Test External
+        Field VCR","modality":"contact","parent":null,"source":"custom","type":"string","finder_view_ids":[],"project_workspace_id":null,"content_center_type":null,"product_profile_ids":[],"finder_views":[],"is_local":false,"created_at":"2026-05-19T22:26:23.120Z","meta":{"max_length":1000000,"push_only":false,"computed_type":"manual","visibility_status":"active"}}],"field":{"id":"contact.6a0ce38ff0c9f6000c9b728b","category":"person","context":["crm_push","csv_export","finder","prompt","settings","snippets","followup_email","formula"],"description":null,"editable":false,"example":null,"field_name":"contact.Test
+        External Field VCR","group":null,"icon_class":null,"label":"Test External
+        Field VCR","modality":"contact","parent":null,"source":"custom","type":"string","finder_view_ids":[],"project_workspace_id":null,"content_center_type":null,"product_profile_ids":[],"finder_views":[],"is_local":false,"created_at":"2026-05-19T22:26:23.120Z","meta":{"max_length":1000000,"push_only":false,"computed_type":"manual","visibility_status":"active"}},"typed_custom_fields":[{"id":"6a0ce38ff0c9f6000c9b728b","modality":"contact","name":"Test
+        External Field VCR","type":"string","picklist_options":[],"mapped_crm_field":null,"additional_mapped_crm_field":null,"is_readonly_mapped_crm_field":null,"picklist_options_last_synced_at":null,"picklist_value_set_id":null,"mirrored":false,"system_name":null,"text_field_max_length":1000000,"finder_view_ids":[],"associated_modality":null,"json_schema":null,"parent_id":null,"project_workspace_id":null,"content_center_type":null,"product_profile_ids":[],"is_local":false,"is_readonly":null,"is_ai_field":false,"is_formula_field":false,"is_dynamic_field":false,"dynamic_field_type":null,"finder_views":[]}],"typed_custom_field":{"id":"6a0ce38ff0c9f6000c9b728b","modality":"contact","name":"Test
+        External Field VCR","type":"string","picklist_options":[],"mapped_crm_field":null,"additional_mapped_crm_field":null,"is_readonly_mapped_crm_field":null,"picklist_options_last_synced_at":null,"picklist_value_set_id":null,"mirrored":false,"system_name":null,"text_field_max_length":1000000,"finder_view_ids":[],"associated_modality":null,"json_schema":null,"parent_id":null,"project_workspace_id":null,"content_center_type":null,"product_profile_ids":[],"is_local":false,"is_readonly":null,"is_ai_field":false,"is_formula_field":false,"is_dynamic_field":false,"dynamic_field_type":null,"finder_views":[]},"field_groups":[{"id":"69d3cbed7bc8d500194ed04c","name":"No
+        group","display_order":6,"modality":"contact","type":"ungrouped","field_ids":["contact.6a0ce1b74f72ed001868563a","contact.6a0ce2de092d410018287b1d","contact.6a0ce38ff0c9f6000c9b728b"],"team_id":"69d3cbed7bc8d500194ecfff"}]}'
+    headers:
+      CF-RAY:
+      - 9fe685da19dbc628-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 19 May 2026 22:26:23 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=ggGjQjmFNNMo6IHaGPuqYAu68lKGv_1Jn56Mv1hYmejc0Sj2bXagQn7NRvAsh2WBsjGtdnyAxZ0YiKlIQTnVbg;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=yJLpvFDT5xR46c73BKnXNtnEqv9fT7%2Fb1XdpqM7BQEN0goWrUywOWuuoVwKNH5NuI9La565SVk1%2Fi8ISrgDpyhqSXqmV%2F6uZmrpfqaqA7JGPHJY6IQXjp5KtVVPqTx5gS3AJi8PMQ77wf5Oq31woqpRP%2Bkgbxhdf6PAbVbo3%2B2uqfB9uqq9GjFEh0jk1pQK%2B9NU44w%2FyfftAI1br9d3hnFYvM31gmRXN25TLXXyZxYFss1hJ2%2B9LgUsDopnzlr7nq3nx133auiQ%2BnSC0oPiDtD5ZhEp%2BItSlw%2Bs%3D--z8CsKdziYAWYUn4N--nOQqkwsAxuk6KhAnORBJdA%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=NL_3QrQjeXRReYqkHjIKGbzmpcnHsZ1rXxwFo.HYoas-1779229582.4206116-1.0.1.1-SMM5Er25oL14r05Qa4snovH5Q_qB9wq.ek_QIKqlkdGhaSJuXmWqnejSPvfZO3Dx26VGkyGsFmoMCk7LcTbnDPtG6Q84he5zRdEwG4tcpXdSBS9ZJYtuAP0IlaoAHVkl;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Tue, 19
+        May 2026 22:56:23 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=edc7b605635b3b69e67938a903f1ef039ebebddf
+      etag:
+      - W/"20dc07ee1046d1ad0f17987bf07b5e21"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '596'
+      x-24-hour-usage:
+      - '4'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '196'
+      x-hourly-usage:
+      - '4'
+      x-minute-requests-left:
+      - '49'
+      x-minute-usage:
+      - '1'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - 26aca93d-522a-45a0-ac42-97d52f1d4063
+      x-runtime:
+      - '0.151167'
+      x-transaction-id:
+      - adfc896b-ffeb-4619-9279-a774de91becf
+    status:
+      code: 200
+      message: OK
+version: 1
