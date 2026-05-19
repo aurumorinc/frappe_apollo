@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "creation": "2024-05-18 23:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "campaign",
+  "sender",
+  "account",
+  "id",
+  "sequence_steps"
+ ],
+ "fields": [
+  {
+   "fieldname": "campaign",
+   "fieldtype": "Link",
+   "label": "Campaign",
+   "options": "Campaign",
+   "required": 1
+  },
+  {
+   "fieldname": "sender",
+   "fieldtype": "Link",
+   "label": "Sender",
+   "options": "User",
+   "required": 1
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "options": "Account",
+   "required": 1
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "label": "Apollo Sequence ID",
+   "required": 1
+  },
+  {
+   "fieldname": "sequence_steps",
+   "fieldtype": "Table",
+   "label": "Sequence Steps",
+   "options": "Sequence Step"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-05-18 23:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Apollo",
+ "name": "Sequence",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
