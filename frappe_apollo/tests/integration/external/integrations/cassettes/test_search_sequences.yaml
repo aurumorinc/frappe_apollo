@@ -1,0 +1,93 @@
+interactions:
+- request:
+    body: '{"page": 1, "per_page": 10}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '27'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: POST
+    uri: https://api.apollo.io/api/v1/emailer_campaigns/search
+  response:
+    body:
+      string: '{"pagination":{"page":1,"per_page":10,"total_entries":1,"total_pages":1},"breadcrumbs":[],"emailer_campaigns":[{"id":"6a0cdfe8da382d001cc8423e","name":"Aryan''s
+        Sequence","archived":false,"created_at":"2026-05-19T22:10:48.396Z","emailer_schedule_id":"69d3cbee7bc8d500194ed14e","max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":["69d3cbed7bc8d500194ed00b","69d3cbed7bc8d500194ed00c","69d3cbed7bc8d500194ed00d","69d3cbed7bc8d500194ed00e"],"excluded_contact_stage_ids":["69d3cbed7bc8d500194ed008","69d3cbed7bc8d500194ed007","69d3cbed7bc8d500194ed003","69d3cbed7bc8d500194ed004"],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":false,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"sequence_by_exact_daytime":null,"permissions":"team_can_use","last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":0,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"status_reason":null,"auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":0,"unique_scheduled":0,"unique_delivered":0,"unique_bounced":0,"unique_opened":0,"unique_hard_bounced":0,"unique_spam_blocked":0,"unique_replied":0,"unique_demoed":0,"unique_clicked":0,"unique_unsubscribed":0,"unique_opened_unfiltered":0,"unique_clicked_unfiltered":0,"unique_delivered_open_tracked":0,"unique_delivered_click_tracked":0,"bounce_rate":0.0,"hard_bounce_rate":0.0,"open_rate":0.0,"open_rate_tracked":0.0,"open_rate_unfiltered":0.0,"open_rate_unfiltered_tracked":0.0,"click_rate":0.0,"click_rate_tracked":0.0,"click_rate_unfiltered":0.0,"click_rate_unfiltered_tracked":0.0,"reply_rate":0.0,"spam_block_rate":0.0,"opt_out_rate":0.0,"demo_rate":0.0,"loaded_stats":true,"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a0cdfe8da382d001cc8423e","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]}}],"num_fetch_result":null}'
+    headers:
+      CF-RAY:
+      - 9fe6756bcd5b160c-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 19 May 2026 22:15:10 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=8hCjLCAlrvgL0_drtpCUBJkPhSb4rMR5baw3uku0Fk41YlulaDMpr3CS-SfNVDSgDAS3YuU8S5VyY8A-pS3hmQ;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=pm3jI4nJ0aEYjxNhC8Yo2WCy4EOQ5fcQgKHT3LnzvqCUdidmTXWAbeiYeNpOqnhVRJ%2Bfn4%2F4AOJeqUBojHuKdLR5mseUh4envI4CaIuE2%2FgERIzWXqb0atQRAXRn0kDjhrWTBY5NKP0I%2BHGRmHaGqf9%2FCYpKXwSZEVXgTY8wfOvaT1BjQLKJp7CNhXg88UkqbKnm7CQJlYh9cDnNGE5eM7Az0E43QrpRmaRYHjZwOFGjyuu%2FpiU4T019Goqir%2F49JEnv%2B%2F7CoJ5nHUvF0po43yCAcKVMTkuYjUk%3D--y6uvqFOWuQBaTW7o--cpLfPjDHdGuZj11ApzfOgQ%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=yEKQpexer60CUAcFk4sRmmQgTNQ6PQmP2lhoLsi5fvo-1779228909.4026163-1.0.1.1-G3ws.Dov8d3u2UHV8IYzhHxHgi_sZWMkIdSmCWTQzhMvJXHv0ILfHsJ1LOKX0pAILnN9dmv3vMlra6HH6EGQdYYHnsgYvZJlIdk24NgbK.uO5Bcv4u2oJ356qmA5s9sZ;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Tue, 19
+        May 2026 22:45:10 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=ffa218d910842ead34562324c7b7e956a69ea2e6
+      etag:
+      - W/"49d66b6743d6e5e0d772c37f2d457baa"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '599'
+      x-24-hour-usage:
+      - '1'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '199'
+      x-hourly-usage:
+      - '1'
+      x-minute-requests-left:
+      - '49'
+      x-minute-usage:
+      - '1'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - 8dfb303b-82dd-4334-a9a5-fae3023db4d2
+      x-runtime:
+      - '0.043031'
+      x-transaction-id:
+      - e930d586-fdb6-47be-b097-2247721c1117
+    status:
+      code: 200
+      message: OK
+version: 1

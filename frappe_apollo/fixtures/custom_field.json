@@ -1,0 +1,25 @@
+[
+ {
+  "dt": "User",
+  "fieldname": "user_mailboxes",
+  "fieldtype": "Table",
+  "insert_after": "user_emails",
+  "label": "User Mailboxes",
+  "module": "Apollo",
+  "name": "User-user_mailboxes",
+  "options": "User Mailbox",
+  "doctype": "Custom Field"
+ },
+ {
+  "dt": "Communication",
+  "fieldname": "apollo_sync_status",
+  "fieldtype": "Select",
+  "insert_after": "delivery_status",
+  "label": "Apollo Sync Status",
+  "module": "Apollo",
+  "name": "Communication-apollo_sync_status",
+  "options": "Pending\nSynced\nError",
+  "default": "Pending",
+  "doctype": "Custom Field"
+ }
+]
