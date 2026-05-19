@@ -132,34 +132,77 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Campaign": {
+		"on_update": "frappe_apollo.apollo.doctype.sequence.sequence.on_campaign_update"
+	},
+	"Multi Channel Campaign": {
+		"after_insert": "frappe_apollo.apollo.doctype.sequence.sequence.on_mcc_after_insert"
+	},
+	"Communication": {
+		"on_update": "frappe_apollo.overrides.communication.on_update"
+	}
+}
 
-# Scheduled Tasks
-# ---------------
+scheduler_events = {
+	"daily": [
+		"frappe_apollo.apollo.doctype.mailbox.mailbox.queue_get_mailboxes"
+	]
+}
 
-# scheduler_events = {
-# 	"all": [
-# 		"frappe_apollo.tasks.all"
-# 	],
-# 	"daily": [
-# 		"frappe_apollo.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"frappe_apollo.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"frappe_apollo.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"frappe_apollo.tasks.monthly"
-# 	],
-# }
+controller_events = {
+	"frappe_apollo.apollo.doctype.mailbox.mailbox.get_mailboxes": {
+		"rate_limit_per_minute": 50,
+		"rate_limit_per_hour": 200,
+		"rate_limit_per_day": 600,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.sequence.sequence.create_contact_add_to_sequence": {
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.sequence.sequence.create_contact": {
+		"rate_limit_per_minute": 50,
+		"rate_limit_per_hour": 200,
+		"rate_limit_per_day": 600,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.sequence.sequence.add_contact_to_sequence": {
+		"rate_limit_per_minute": 50,
+		"rate_limit_per_hour": 200,
+		"rate_limit_per_day": 600,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.sequence.sequence.provision_custom_field": {
+		"rate_limit_per_minute": 50,
+		"rate_limit_per_hour": 200,
+		"rate_limit_per_day": 600,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.overrides.communication.update_contact": {
+		"rate_limit_per_minute": 50,
+		"rate_limit_per_hour": 200,
+		"rate_limit_per_day": 600,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.webhook.process_webhook": {
+		"rate_limit_per_minute": 50,
+		"retries": 3,
+		"timeout": 300
+	}
+}
+
+# after_install = "frappe_apollo.setup.after_install"
+
+fixtures = [
+	{"dt": "Custom Field", "filters": [["module", "=", "Apollo"]]}
+]
+
 
 # Testing
 # -------
