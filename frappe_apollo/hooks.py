@@ -132,16 +132,10 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-doc_events = {
-	"Campaign": {
-		"on_update": "frappe_apollo.apollo.doctype.sequence.sequence.on_campaign_update"
-	},
-	"Multi Channel Campaign": {
-		"after_insert": "frappe_apollo.apollo.doctype.sequence.sequence.on_mcc_after_insert"
-	},
-	"Communication": {
-		"on_update": "frappe_apollo.overrides.communication.on_update"
-	}
+# doc_events = {}
+
+cadence_providers = {
+	"Apollo": "frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.ApolloCadenceProvider"
 }
 
 scheduler_events = {
@@ -158,24 +152,6 @@ controller_events = {
 		"retries": 3,
 		"timeout": 300
 	},
-	"frappe_apollo.apollo.doctype.sequence.sequence.create_contact_add_to_sequence": {
-		"retries": 3,
-		"timeout": 300
-	},
-	"frappe_apollo.apollo.doctype.sequence.sequence.create_contact": {
-		"rate_limit_per_minute": 50,
-		"rate_limit_per_hour": 200,
-		"rate_limit_per_day": 600,
-		"retries": 3,
-		"timeout": 300
-	},
-	"frappe_apollo.apollo.doctype.sequence.sequence.add_contact_to_sequence": {
-		"rate_limit_per_minute": 50,
-		"rate_limit_per_hour": 200,
-		"rate_limit_per_day": 600,
-		"retries": 3,
-		"timeout": 300
-	},
 	"frappe_apollo.apollo.doctype.sequence.sequence.provision_custom_field": {
 		"rate_limit_per_minute": 50,
 		"rate_limit_per_hour": 200,
@@ -183,14 +159,17 @@ controller_events = {
 		"retries": 3,
 		"timeout": 300
 	},
-	"frappe_apollo.overrides.communication.update_contact": {
+	"frappe_apollo.webhook.process_webhook": {
 		"rate_limit_per_minute": 50,
-		"rate_limit_per_hour": 200,
-		"rate_limit_per_day": 600,
 		"retries": 3,
 		"timeout": 300
 	},
-	"frappe_apollo.webhook.process_webhook": {
+	"frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.async_sync_lead_and_assign_sequence": {
+		"rate_limit_per_minute": 50,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.async_sync_communication_to_apollo": {
 		"rate_limit_per_minute": 50,
 		"retries": 3,
 		"timeout": 300
