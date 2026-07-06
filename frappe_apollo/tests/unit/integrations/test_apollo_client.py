@@ -1,0 +1,113 @@
+import frappe
+from frappe.tests import UnitTestCase
+from frappe_apollo.integrations.apollo import ApolloClient, ApolloRateLimitError
+from unittest.mock import patch, MagicMock
+import requests
+
+class TestApolloClient(UnitTestCase):
+
+    @patch("frappe.get_doc")
+    def test_get_headers_api_key(self, mock_get_doc):
+        mock_account = MagicMock()
+        mock_account.api_key = "test_key"
+        mock_account.access_token = None
+        mock_get_doc.return_value = mock_account
+
+        client = ApolloClient("Test Account")
+        headers = client._get_headers()
+        
+        self.assertEqual(headers.get("X-Api-Key"), "test_key")
+        self.assertNotIn("Authorization", headers)
+
+    @patch("frappe.get_doc")
+    def test_get_headers_oauth(self, mock_get_doc):
+        mock_account = MagicMock()
+        mock_account.api_key = None
+        mock_account.access_token = "some_token"
+        mock_account.get_password.return_value = "actual_token_value"
+        mock_get_doc.return_value = mock_account
+
+        client = ApolloClient("Test Account")
+        headers = client._get_headers()
+        
+        self.assertEqual(headers.get("Authorization"), "Bearer actual_token_value")
+        self.assertNotIn("X-Api-Key", headers)
+        mock_account.get_password.assert_called_with("access_token")
+
+    @patch("frappe.get_doc")
+    @patch("frappe_apollo.integrations.apollo.requests.request")
+    def test_rate_limit_error(self, mock_request, mock_get_doc):
+        mock_account = MagicMock()
+        mock_account.api_key = "key"
+        mock_get_doc.return_value = mock_account
+
+        mock_response = MagicMock()
+        mock_response.status_code = 429
+        mock_request.return_value = mock_response
+
+        client = ApolloClient("Test Account")
+        
+        with self.assertRaises(ApolloRateLimitError):
+            client.get_email_accounts()
+
+    @patch("frappe.get_doc")
+    @patch("frappe_apollo.integrations.apollo.requests.request")
+    def test_oauth_refresh(self, mock_request, mock_get_doc):
+        mock_account = MagicMock()
+        mock_account.api_key = None
+        mock_account.access_token = "old"
+        mock_account.refresh_token = "refresh"
+        mock_account.get_password.return_value = "old"
+        mock_get_doc.return_value = mock_account
+
+        # First request returns 401, second returns 200
+        response_401 = MagicMock()
+        response_401.status_code = 401
+        
+        response_200 = MagicMock()
+        response_200.status_code = 200
+        response_200.json.return_value = {"success": True}
+        
+        mock_request.side_effect = [response_401, response_200]
+
+        client = ApolloClient("Test Account")
+        
+        with patch.object(client, "_refresh_oauth_token") as mock_refresh:
+            res = client._request("GET", "/test")
+            self.assertEqual(res, {"success": True})
+            mock_refresh.assert_called_once()
+            self.assertEqual(mock_request.call_count, 2)
+
+    @patch("frappe.get_doc")
+    @patch("frappe_apollo.integrations.apollo.requests.request")
+    def test_fallback_logic_add_contacts(self, mock_request, mock_get_doc):
+        mock_account = MagicMock()
+        mock_get_doc.return_value = mock_account
+
+        # Simulate 422 error on first call
+        def mock_request_side_effect(*args, **kwargs):
+            if "json" in kwargs:
+                # the first call has 'json'
+                response_422 = MagicMock()
+                response_422.status_code = 422
+                error = requests.exceptions.HTTPError("422")
+                error.response = response_422
+                raise error
+            
+            # the second call has 'params'
+            response_200 = MagicMock()
+            response_200.status_code = 200
+            response_200.json.return_value = {"success": True}
+            return response_200
+
+        mock_request.side_effect = mock_request_side_effect
+
+        client = ApolloClient("Test Account")
+        res = client.add_contacts_to_sequence("person-1", "seq-1", "mb-1")
+        
+        self.assertEqual(res, {"success": True})
+        self.assertEqual(mock_request.call_count, 2)
+        # Ensure second call uses params
+        last_call_kwargs = mock_request.call_args_list[1][1]
+        self.assertIn("params", last_call_kwargs)
+        self.assertNotIn("json", last_call_kwargs)
