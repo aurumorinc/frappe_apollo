@@ -1,23 +1,39 @@
 import frappe
 from frappe.tests import UnitTestCase
-from frappe_apollo.apollo.doctype.sequence.sequence import Sequence, provision_custom_field
+from frappe_apollo.apollo.doctype.sequence.sequence import Sequence, provision_custom_field, on_cadence_update
 from unittest.mock import patch, MagicMock
 
 class TestSequence(UnitTestCase):
 
+    @patch("frappe_apollo.apollo.doctype.sequence.sequence.frappe.get_all")
+    @patch("frappe_apollo.apollo.doctype.sequence.sequence.frappe.get_doc")
+    def test_on_cadence_update(self, mock_get_doc, mock_get_all):
+        mock_get_all.return_value = ["Seq-1", "Seq-2"]
+        mock_seq_1 = MagicMock()
+        mock_seq_2 = MagicMock()
+        mock_get_doc.side_effect = [mock_seq_1, mock_seq_2]
+        
+        on_cadence_update("Cadence-1")
+        
+        mock_get_all.assert_called_once_with("Sequence", filters={"cadence": "Cadence-1"}, pluck="name")
+        mock_seq_1._populate_sequence_steps.assert_called_once()
+        mock_seq_1.save.assert_called_once_with(ignore_permissions=True)
+        mock_seq_2._populate_sequence_steps.assert_called_once()
+        mock_seq_2.save.assert_called_once_with(ignore_permissions=True)
+
     @patch("frappe.get_doc")
     def test_populate_sequence_steps(self, mock_get_doc):
-        # Create a mock campaign with 3 email schedules and 1 other schedule
-        mock_campaign = MagicMock()
+        # Create a mock cadence with 3 email schedules and 1 other schedule
+        mock_cadence = MagicMock()
         mock_schedule_1 = MagicMock(reference_doctype="Email Template")
         mock_schedule_2 = MagicMock(reference_doctype="Email Template")
         mock_schedule_3 = MagicMock(reference_doctype="SMS Template")
-        mock_campaign.get.return_value = [mock_schedule_1, mock_schedule_2, mock_schedule_3]
-        mock_get_doc.return_value = mock_campaign
+        mock_cadence.get.return_value = [mock_schedule_1, mock_schedule_2, mock_schedule_3]
+        mock_get_doc.return_value = mock_cadence
 
         # Our sequence initially has 0 steps
         seq = Sequence({"doctype": "Sequence"})
-        seq.campaign = "Camp-1"
+        seq.cadence = "Cadence-1"
         seq.sequence_steps = []
         seq.save = MagicMock()
 

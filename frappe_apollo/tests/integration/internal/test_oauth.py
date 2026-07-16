@@ -7,6 +7,9 @@ class TestOAuth(IntegrationTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		
+		frappe.db.sql("DELETE FROM `tabAccount`")
+		frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account'")
+		
 		# Create Account
 		if not frappe.db.exists("Account", "Test Account OAuth"):
 			frappe.get_doc({
@@ -19,8 +22,9 @@ class TestOAuth(IntegrationTestCase):
 
 	@classmethod
 	def tearDownClass(cls):
-		frappe.db.rollback()
-		super().tearDownClass()
+	    frappe.db.rollback()
+	    frappe.local.conf.pop("encryption_key", None)
+	    super().tearDownClass()
 
 	@patch("frappe_apollo.oauth.requests.post")
 	def test_oauth_callback(self, mock_post):

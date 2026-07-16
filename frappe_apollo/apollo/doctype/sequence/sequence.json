@@ -6,7 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "campaign",
+  "cadence",
   "sender",
   "account",
   "id",
@@ -14,10 +14,10 @@
  ],
  "fields": [
   {
-   "fieldname": "campaign",
+   "fieldname": "cadence",
    "fieldtype": "Link",
-   "label": "Campaign",
-   "options": "Campaign",
+   "label": "Cadence",
+   "options": "Cadence",
    "required": 1
   },
   {
