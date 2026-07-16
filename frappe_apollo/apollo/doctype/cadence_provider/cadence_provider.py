@@ -1,12 +1,12 @@
 import frappe
-from frappe_cadence.cadence.doctype.cadence_provider.cadence_provider import CadenceProviderBase
+from frappe_cadence.cadence.doctype.cadence_provider.cadence_provider import BaseCadenceProvider
 from frappe_apollo.integrations.apollo import ApolloClient, ApolloRateLimitError
 from frappe_controller.utils.background_jobs import enqueue
 from frappe_controller.utils.controller import wait_for_event
 
-class ApolloCadenceProvider(CadenceProviderBase):
+class ApolloCadenceProvider(BaseCadenceProvider):
 
-    def on_mcc_status_changed(self, mcc_doc, old_status, new_status):
+    def on_mcc_update(self, mcc_doc, old_status, new_status):
         if old_status == "Draft" and new_status == "Scheduled":
             enqueue(
                 method="frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.async_sync_lead_and_assign_sequence",
@@ -14,10 +14,14 @@ class ApolloCadenceProvider(CadenceProviderBase):
                 mcc_name=mcc_doc.name
             )
 
-    def on_cadence_updated(self, cadence_doc):
-        pass
+    def on_cadence_update(self, doc, method=None):
+        enqueue(
+            method="frappe_apollo.apollo.doctype.sequence.sequence.on_cadence_update",
+            queue="low",
+            cadence_name=doc.name
+        )
 
-    def on_communication_status_changed(self, comm_doc, old_status, new_status):
+    def on_communication_update(self, comm_doc, old_status, new_status):
         if new_status == "Scheduled":
             enqueue(
                 method="frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.async_sync_communication_to_apollo",
@@ -83,7 +87,7 @@ def async_sync_lead_and_assign_sequence(mcc_name):
 
     # Find Sequence
     sequence = frappe.get_all("Sequence", filters={
-        "campaign": mcc.cadence_name,
+        "cadence": mcc.cadence_name,
         "account": account_name
     }, fields=["id"], limit=1)
 
@@ -91,7 +95,7 @@ def async_sync_lead_and_assign_sequence(mcc_name):
         frappe.log_error(f"No Apollo Sequence found for Cadence {mcc.cadence_name} and Account {account_name}")
         wait_for_event(
             event_key="doc:Sequence:after_insert",
-            condition=f"argument.get('campaign') == '{mcc.cadence_name}' and argument.get('account') == '{account_name}'"
+            condition=f"argument.get('cadence') == '{mcc.cadence_name}' and argument.get('account') == '{account_name}'"
         )
 
     sequence_id = sequence[0].id
@@ -131,7 +135,7 @@ def async_sync_communication_to_apollo(comm_name):
 
     # Find Sequence
     sequence = frappe.get_all("Sequence", filters={
-        "campaign": mcc.cadence_name,
+        "cadence": mcc.cadence_name,
         "account": account_name
     }, limit=1)
 
@@ -139,7 +143,7 @@ def async_sync_communication_to_apollo(comm_name):
         frappe.log_error(f"No Apollo Sequence found for Cadence {mcc.cadence_name} and Account {account_name}")
         wait_for_event(
             event_key="doc:Sequence:after_insert",
-            condition=f"argument.get('campaign') == '{mcc.cadence_name}' and argument.get('account') == '{account_name}'"
+            condition=f"argument.get('cadence') == '{mcc.cadence_name}' and argument.get('account') == '{account_name}'"
         )
 
     seq_doc = frappe.get_doc("Sequence", sequence[0].name)

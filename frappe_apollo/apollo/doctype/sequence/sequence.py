@@ -9,14 +9,14 @@ class Sequence(Document):
 
 	def _populate_sequence_steps(self):
 		"""
-		Ensures the number of Sequence Step rows matches the number of Email schedules in the Campaign.
+		Ensures the number of Sequence Step rows matches the number of Email schedules in the Cadence.
 		"""
-		if not self.campaign:
+		if not self.cadence:
 			return
 			
-		campaign = frappe.get_doc("Campaign", self.campaign)
+		cadence = frappe.get_doc("Cadence", self.cadence)
 		# Filter schedules to only include those where reference_doctype == "Email Template"
-		email_schedules = [s for s in (campaign.get("campaign_schedules") or []) if s.reference_doctype == "Email Template"]
+		email_schedules = [s for s in (cadence.get("cadence_schedules") or []) if s.reference_doctype == "Email Template"]
 		
 		current_steps = self.get("sequence_steps") or []
 		if len(current_steps) < len(email_schedules):
@@ -46,6 +46,19 @@ class Sequence(Document):
 					step_idx=idx,
 					field_type="response"
 				)
+
+def on_cadence_update(cadence_name):
+	"""
+	Triggered via background job when a Cadence is updated.
+	"""
+	try:
+		sequences = frappe.get_all("Sequence", filters={"cadence": cadence_name}, pluck="name")
+		for seq_name in sequences:
+			sequence = frappe.get_doc("Sequence", seq_name)
+			sequence._populate_sequence_steps()
+			sequence.save(ignore_permissions=True)
+	except Exception as e:
+		frappe.log_error(title="Failed to update Apollo Sequences for Cadence", message=str(e))
 
 def provision_custom_field(sequence_name, step_idx, field_type):
 	"""

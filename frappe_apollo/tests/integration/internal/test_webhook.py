@@ -9,7 +9,8 @@ class TestWebhookIntegration(IntegrationTestCase):
     def setUpClass(cls):
         super().setUpClass()
         # Clean up
-        frappe.db.sql("DELETE FROM `tabAccount` WHERE name = 'Webhook Account'")
+        frappe.db.sql("DELETE FROM `tabAccount`")
+        frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account'")
         frappe.db.sql("DELETE FROM `tabPeople` WHERE account = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabSequence` WHERE account = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabCRM Lead` WHERE first_name = 'Webhook'")
@@ -129,6 +130,72 @@ class TestWebhookIntegration(IntegrationTestCase):
         mock_report_event.assert_called_once_with(
             "message_sent",
             {"mcc_name": self.mcc_name, "communication_name": comm.name},
+            payload
+        )
+
+    @patch("frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.ApolloCadenceProvider.report_event")
+    def test_process_webhook_message_opened(self, mock_report_event):
+        comm = frappe.get_doc({
+            "doctype": "Communication",
+            "communication_type": "Communication",
+            "reference_doctype": "Multi Channel Cadence",
+            "reference_name": self.mcc_name,
+            "delivery_status": "Sent",
+            "subject": "Test",
+            "content": "Test body"
+        }).insert(ignore_permissions=True, ignore_links=True)
+
+        payload = {
+            "event": "message_opened",
+            "contact_id": "contact_123",
+            "emailer_campaign_id": "seq_123"
+        }
+
+        original_get_all = frappe.get_all
+        def mock_get_all_side_effect(doctype, *args, **kwargs):
+            if doctype == "Sequence":
+                return [frappe._dict({"campaign": self.cadence_name})]
+            if doctype == "Communication":
+                return [frappe._dict({"name": comm.name})]
+            if doctype == "Multi Channel Cadence":
+                return [frappe._dict({"name": self.mcc_name})]
+            if doctype == "People":
+                return [frappe._dict({"lead": self.lead_name, "account": "Webhook Account"})]
+            return original_get_all(doctype, *args, **kwargs)
+
+        with patch("frappe.get_all", side_effect=mock_get_all_side_effect):
+            process_webhook(payload)
+
+        mock_report_event.assert_called_once_with(
+            "message_opened",
+            {"mcc_name": self.mcc_name, "communication_name": comm.name},
+            payload
+        )
+
+    @patch("frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.ApolloCadenceProvider.report_event")
+    def test_process_webhook_message_replied(self, mock_report_event):
+        payload = {
+            "event": "message_replied",
+            "contact_id": "contact_123",
+            "emailer_campaign_id": "seq_123"
+        }
+
+        original_get_all = frappe.get_all
+        def mock_get_all_side_effect(doctype, *args, **kwargs):
+            if doctype == "Sequence":
+                return [frappe._dict({"campaign": self.cadence_name})]
+            if doctype == "Multi Channel Cadence":
+                return [frappe._dict({"name": self.mcc_name})]
+            if doctype == "People":
+                return [frappe._dict({"lead": self.lead_name, "account": "Webhook Account"})]
+            return original_get_all(doctype, *args, **kwargs)
+
+        with patch("frappe.get_all", side_effect=mock_get_all_side_effect):
+            process_webhook(payload)
+
+        mock_report_event.assert_called_once_with(
+            "message_replied",
+            {"mcc_name": self.mcc_name},
             payload
         )
 

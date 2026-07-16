@@ -1,3 +1,9 @@
+import aiohttp.streams
+if not hasattr(aiohttp.streams, "AsyncStreamReaderMixin"):
+    class AsyncStreamReaderMixin:
+        pass
+    aiohttp.streams.AsyncStreamReaderMixin = AsyncStreamReaderMixin
+
 import vcr
 import os
 import frappe
