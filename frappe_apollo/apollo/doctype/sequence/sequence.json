@@ -35,9 +35,9 @@
    "required": 1
   },
   {
-   "fieldname": "id",
+   "fieldname": "apollo_id",
    "fieldtype": "Data",
-   "label": "Apollo Sequence ID",
+   "label": "Apollo ID",
    "required": 1
   },
   {
@@ -45,6 +45,13 @@
    "fieldtype": "Table",
    "label": "Sequence Steps",
    "options": "Sequence Step"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive",
+   "default": "Active"
   }
  ],
  "index_web_pages_for_search": 1,
