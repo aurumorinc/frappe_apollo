@@ -1,0 +1,122 @@
+import frappe
+from frappe_controller.utils.background_jobs import enqueue
+from frappe_controller.utils.controller import wait_for_event
+
+def on_update(doc, method=None):
+	if doc.get_doc_before_save() and doc.get_doc_before_save().status != "Scheduled" and doc.status == "Scheduled":
+		enqueue(
+			method="frappe_apollo.apollo.doctype.communication.communication.update_a_communication",
+			queue="medium",
+			comm_name=doc.name
+		)
+
+def update_a_communication(comm_name):
+	from frappe_apollo.integrations.apollo import ApolloClient
+	from frappe_controller.utils.controller import SuspendJob
+	
+	comm = frappe.get_doc("Communication", comm_name)
+	
+	if comm.get("apollo_sync_status") == "Synced":
+		return
+		
+	mcc = frappe.get_doc("Multi Channel Cadence", comm.reference_name)
+	
+	# Find Account by looking at User Mailbox (we don't wait for mailbox itself, just get Account)
+	# Actually, the account should be fetched from the People record or MCC sequence.
+	mailbox_id = frappe.db.get_value("User Mailbox", {"parent": mcc.sender}, "mailbox")
+	if not mailbox_id:
+		wait_for_event(
+			event_key="doc:User Mailbox:after_insert",
+			condition=f"argument.get('parent') == '{mcc.sender}'"
+		)
+	mailbox = frappe.get_doc("Mailbox", mailbox_id)
+	account_name = mailbox.account
+	
+	settings = frappe.get_single("Apollo Settings")
+	if not settings.enabled:
+		wait_for_event(
+			event_key="doc:Apollo Settings:on_update",
+			condition="argument.get('enabled') == 1"
+		)
+		
+	account = frappe.get_doc("Account", account_name)
+	if account.status != "Active":
+		wait_for_event(
+			event_key="doc:Account:on_update",
+			condition=f"argument.get('name') == '{account_name}' and argument.get('status') == 'Active'"
+		)
+		
+	people_name = frappe.db.get_value("People", {"lead": mcc.recipient, "account": account_name}, "name")
+	if not people_name:
+		wait_for_event(
+			event_key="doc:People:after_insert",
+			condition=f"argument.get('lead') == '{mcc.recipient}' and argument.get('account') == '{account_name}'"
+		)
+	people = frappe.get_doc("People", people_name)
+	if not people.apollo_id:
+		wait_for_event(
+			event_key="doc:People:on_update",
+			condition=f"argument.get('name') == '{people_name}' and argument.get('apollo_id')"
+		)
+		
+	sequence = frappe.get_all("Sequence", filters={
+		"cadence": mcc.cadence_name,
+		"account": account_name
+	}, limit=1)
+	if not sequence:
+		wait_for_event(
+			event_key="doc:Sequence:after_insert",
+			condition=f"argument.get('cadence') == '{mcc.cadence_name}' and argument.get('account') == '{account_name}'"
+		)
+	seq_doc = frappe.get_doc("Sequence", sequence[0].get("name"))
+	
+	step_idx = 1
+	if comm.cadence_schedule:
+		cadence = frappe.get_doc("Cadence", mcc.cadence_name)
+		for idx, sch in enumerate(cadence.cadence_schedules):
+			if sch.name == comm.cadence_schedule:
+				step_idx = idx + 1
+				break
+				
+	if step_idx > len(seq_doc.sequence_steps):
+		wait_for_event(
+			event_key="doc:Sequence:on_update",
+			condition=f"argument.get('name') == '{seq_doc.name}'"
+		)
+		
+	step = seq_doc.sequence_steps[step_idx - 1]
+	
+	if not step.subject_custom_field_id or not step.response_custom_field_id:
+		wait_for_event(
+			event_key="doc:Sequence:on_update",
+			condition=f"argument.get('name') == '{seq_doc.name}'" # will loop back
+		)
+		
+	# Wait for actual Field docs to have apollo_id
+	subject_field = frappe.get_doc("Field", step.subject_custom_field_id)
+	if not subject_field.apollo_id:
+		wait_for_event(
+			event_key="doc:Field:on_update",
+			condition=f"argument.get('name') == '{subject_field.name}' and argument.get('apollo_id')"
+		)
+		
+	response_field = frappe.get_doc("Field", step.response_custom_field_id)
+	if not response_field.apollo_id:
+		wait_for_event(
+			event_key="doc:Field:on_update",
+			condition=f"argument.get('name') == '{response_field.name}' and argument.get('apollo_id')"
+		)
+		
+	custom_fields = {
+		subject_field.apollo_id: comm.subject,
+		response_field.apollo_id: comm.content
+	}
+	
+	client = ApolloClient(account_name)
+	try:
+		client.update_people(people.apollo_id, custom_fields)
+		comm.db_set("apollo_id", people.apollo_id)
+		comm.db_set("apollo_sync_status", "Synced")
+	except Exception as e:
+		frappe.log_error(title="Failed to sync Communication to Apollo", message=str(e))
+		raise
