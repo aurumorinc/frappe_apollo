@@ -55,16 +55,10 @@ def process_webhook(payload):
 	lead_name = crm_lead_accounts[0].lead
 	account_name = crm_lead_accounts[0].account
 	
-	sequence = frappe.get_all("Sequence", filters={"id": sequence_id, "account": account_name}, fields=["campaign"])
-	if not sequence:
-		frappe.log_error("sequence not found")
-		return
-		
-	cadence_name = sequence[0].campaign
-	
 	mccs = frappe.get_all("Multi Channel Cadence", filters={
 		"recipient": lead_name,
-		"cadence_name": cadence_name
+		"apollo_sequence_id": sequence_id,
+		"apollo_account": account_name
 	}, fields=["name"], order_by="creation desc", limit=1)
 	
 	if not mccs:

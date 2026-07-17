@@ -140,7 +140,7 @@ doc_events = {
 		"on_update": "frappe_apollo.apollo.doctype.communication.communication.on_update"
 	},
 	"Multi Channel Cadence": {
-		"before_save": "frappe_apollo.overrides.multi_channel_cadence.before_save",
+		"before_save": "frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.before_save",
 		"on_update": "frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.on_update"
 	}
 }

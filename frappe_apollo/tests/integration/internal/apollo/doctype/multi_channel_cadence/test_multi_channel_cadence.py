@@ -1,6 +1,6 @@
 import frappe
 from frappe.tests import IntegrationTestCase
-from frappe_apollo.overrides.multi_channel_cadence import add_a_contact_to_sequence, _assign_contact_to_sequence
+from frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence import add_a_contact_to_sequence, _assign_contact_to_sequence
 from frappe_apollo.apollo.doctype.crm_lead.crm_lead import _create_a_contact
 from frappe_controller.utils.controller import SuspendJob
 from unittest.mock import patch, MagicMock
