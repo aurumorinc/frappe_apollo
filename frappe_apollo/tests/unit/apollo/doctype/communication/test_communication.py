@@ -52,7 +52,7 @@ class TestCommunicationOverride(UnitTestCase):
     @patch("frappe_apollo.apollo.doctype.communication.communication.wait_for_event")
     @patch("frappe.get_doc")
     @patch("frappe.db.get_value")
-    def test_wait_state_email_account(self, mock_get_value, mock_get_doc, mock_wait):
+    def test_wait_state_mcc(self, mock_get_value, mock_get_doc, mock_wait):
         from frappe_controller.utils.controller import SuspendJob
         mock_wait.side_effect = SuspendJob("Suspended")
 
@@ -60,16 +60,16 @@ class TestCommunicationOverride(UnitTestCase):
         mock_comm.get.return_value = None
         mock_mcc = MagicMock()
         mock_mcc.sender = "user@example.com"
+        mock_mcc.apollo_account = None
 
         mock_get_doc.side_effect = [mock_comm, mock_mcc]
-        mock_get_value.return_value = None # User Email not found
 
         with self.assertRaises(SuspendJob):
             update_a_contact("Comm-1")
 
         mock_wait.assert_called_once_with(
-            event_key="doc:User Email:after_insert",
-            condition="argument.get('parent') == 'user@example.com'"
+            event_key="doc:Multi Channel Cadence:on_update",
+            condition=f"argument.get('name') == '{mock_mcc.name}' and argument.get('apollo_account') and argument.get('apollo_sequence_id')"
         )
 
     @patch("frappe_apollo.apollo.doctype.communication.communication.wait_for_event")
@@ -86,21 +86,15 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc = MagicMock()
         mock_mcc.sender = "user@example.com"
         mock_mcc.recipient = "Lead-1"
-        
-        mock_email_account = MagicMock()
-        mock_acc = MagicMock()
-        mock_acc.account = "Acc-1"
-        mock_acc.apollo_id = "apollo-1"
-        mock_email_account.apollo_ids = [mock_acc]
+        mock_mcc.apollo_account = "Acc-1"
+        mock_mcc.apollo_sequence_id = "Seq-1"
         
         mock_account = MagicMock()
         mock_account.status = "Active"
 
-        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_email_account, mock_account]
+        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_account]
         
         def mock_get_value_side_effect(*args, **kwargs):
-            if args[0] == "User Email":
-                return "Email-Acc-1"
             if args[0] == "Cadence Provider":
                 return 1
             return None
@@ -133,12 +127,8 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc.sender = "user@example.com"
         mock_mcc.cadence_name = "Cadence-1"
         mock_mcc.recipient = "Lead-1"
-        
-        mock_email_account = MagicMock()
-        mock_acc = MagicMock()
-        mock_acc.account = "Acc-1"
-        mock_acc.apollo_id = "apollo-1"
-        mock_email_account.apollo_ids = [mock_acc]
+        mock_mcc.apollo_account = "Acc-1"
+        mock_mcc.apollo_sequence_id = "Seq-1"
         
         mock_account = MagicMock()
         mock_account.status = "Active"
@@ -146,35 +136,34 @@ class TestCommunicationOverride(UnitTestCase):
         mock_cadence = MagicMock()
         mock_sch = MagicMock()
         mock_sch.name = "Sch-1"
+        mock_sch.subject_field = "sf-1"
+        mock_sch.message_field = "rf-1"
         mock_cadence.cadence_schedules = [mock_sch]
         
-        mock_step = MagicMock()
-        mock_step.subject_custom_field_id = "sf-1"
-        mock_step.response_custom_field_id = "rf-1"
-        
-        mock_seq_doc = MagicMock()
-        mock_seq_doc.sequence_steps = [mock_step]
-        
         mock_subject_field = MagicMock()
-        mock_subject_field.apollo_id = "apollo-sf-1"
+        mock_subject_row = MagicMock()
+        mock_subject_row.account = "Acc-1"
+        mock_subject_row.apollo_sequence_id = "Seq-1"
+        mock_subject_row.apollo_id = "apollo-sf-1"
+        mock_subject_field.get.return_value = [mock_subject_row]
         
         mock_response_field = MagicMock()
-        mock_response_field.apollo_id = "apollo-rf-1"
+        mock_response_row = MagicMock()
+        mock_response_row.account = "Acc-1"
+        mock_response_row.apollo_sequence_id = "Seq-1"
+        mock_response_row.apollo_id = "apollo-rf-1"
+        mock_response_field.get.return_value = [mock_response_row]
 
         mock_get_doc.side_effect = [
-            mock_comm, 
-            mock_mcc, 
-            mock_email_account, 
-            mock_account, 
-            mock_seq_doc,
+            mock_comm,
+            mock_mcc,
+            mock_account,
             mock_cadence,
             mock_subject_field,
             mock_response_field
         ]
         
         def mock_get_value_side_effect(*args, **kwargs):
-            if args[0] == "User Email":
-                return "Email-Acc-1"
             if args[0] == "Cadence Provider":
                 return 1
             return None
@@ -187,8 +176,6 @@ class TestCommunicationOverride(UnitTestCase):
         def get_all_side_effect(*args, **kwargs):
             if args[0] == "CRM Lead Apollo ID":
                 return [mock_crm_account]
-            if args[0] == "Sequence":
-                return [MagicMock(name="Seq-1")]
             return []
 
         mock_get_all.side_effect = get_all_side_effect
