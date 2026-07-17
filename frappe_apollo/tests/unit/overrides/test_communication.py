@@ -18,7 +18,8 @@ class TestCommunicationOverride(UnitTestCase):
 
     @patch("frappe_controller.utils.controller.wait_for_event")
     @patch("frappe.get_doc")
-    def test_wait_state_settings(self, mock_get_doc, mock_wait):
+    @patch("frappe.db.get_value")
+    def test_wait_state_settings(self, mock_get_value, mock_get_doc, mock_wait):
         from frappe_controller.utils.controller import SuspendJob
         mock_wait.side_effect = SuspendJob("Suspended")
 
@@ -30,14 +31,15 @@ class TestCommunicationOverride(UnitTestCase):
         mock_settings.enable = 0
 
         # Return Sequence: Comm, MCC, Settings
-        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_settings]
+        mock_get_doc.side_effect = [mock_comm, mock_mcc]
+        mock_get_value.return_value = 0
 
         with self.assertRaises(SuspendJob):
             update_contact("Comm-1")
 
         mock_wait.assert_called_once_with(
-            event_key="doc:Apollo Settings:on_update",
-            condition="argument.get('enable') == 1"
+            event_key="doc:Cadence Provider:on_update:Apollo",
+            condition="argument.get('enabled') == 1"
         )
 
     @patch("frappe_controller.utils.controller.wait_for_event")
@@ -53,13 +55,13 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc = MagicMock()
         mock_mcc.sender = "user@example.com"
         
-        mock_settings = MagicMock()
-        mock_settings.enable = 1
-
-        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_settings]
+        mock_get_doc.side_effect = [mock_comm, mock_mcc]
         
-        # db.get_value returns None for mailbox
-        mock_get_value.return_value = None
+        def mock_get_value_side_effect(*args, **kwargs):
+            if args[0] == "Cadence Provider": return 1
+            if args[0] == "User Mailbox": return None
+            return None
+        mock_get_value.side_effect = mock_get_value_side_effect
 
         with self.assertRaises(SuspendJob):
             update_contact("Comm-1")
@@ -84,14 +86,11 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc.sender = "user@example.com"
         mock_mcc.campaign_name = "Camp-1"
         
-        mock_settings = MagicMock()
-        mock_settings.enable = 1
-        
         mock_mailbox = MagicMock()
         mock_mailbox.account = "Acc-1"
 
-        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_settings, mock_mailbox]
-        mock_get_value.side_effect = ["Mailbox-1"] # User Mailbox -> Mailbox ID
+        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_mailbox]
+        mock_get_value.side_effect = [1, "Mailbox-1"] # Cadence Provider -> enabled, User Mailbox -> Mailbox ID
         
         mock_get_all.return_value = [] # Sequence not found
 
@@ -119,18 +118,17 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc.campaign_name = "Camp-1"
         mock_mcc.recipient = "Lead-1"
         
-        mock_settings = MagicMock()
-        mock_settings.enable = 1
-        
         mock_mailbox = MagicMock()
         mock_mailbox.account = "Acc-1"
         
         mock_seq_doc = MagicMock()
 
-        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_settings, mock_mailbox, mock_seq_doc]
+        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_mailbox, mock_seq_doc]
         
         # First call gets mailbox, second call gets people
         def mock_get_value_side_effect(*args, **kwargs):
+            if args[0] == "Cadence Provider":
+                return 1
             if args[0] == "User Mailbox":
                 return "Mailbox-1"
             if args[0] == "People":
@@ -167,9 +165,6 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc.recipient = "Lead-1"
         mock_mcc.get.return_value = 1 # step_idx
         
-        mock_settings = MagicMock()
-        mock_settings.enable = 1
-        
         mock_mailbox = MagicMock()
         mock_mailbox.account = "Acc-1"
         
@@ -180,9 +175,10 @@ class TestCommunicationOverride(UnitTestCase):
         mock_seq_doc = MagicMock()
         mock_seq_doc.sequence_steps = [mock_step]
 
-        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_settings, mock_mailbox, mock_seq_doc]
+        mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_mailbox, mock_seq_doc]
         
         def mock_get_value_side_effect(*args, **kwargs):
+            if args[0] == "Cadence Provider": return 1
             if args[0] == "User Mailbox":
                 return "Mailbox-1"
             if args[0] == "People":
