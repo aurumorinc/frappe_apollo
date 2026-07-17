@@ -4,11 +4,7 @@ from urllib.parse import urlparse, urlunparse
 
 class Account(Document):
 	def on_update(self):
-		# Sweeps all linked Sequence records and triggers their on_update logic
-		sequences = frappe.get_all("Sequence", filters={"account": self.name})
-		for seq in sequences:
-			doc = frappe.get_doc("Sequence", seq.name)
-			doc.save()
+		pass
 			
 	def after_insert(self):
 		frappe.enqueue(
