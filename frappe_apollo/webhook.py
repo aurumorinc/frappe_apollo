@@ -47,13 +47,13 @@ def process_webhook(payload):
 	if not contact_id or not sequence_id:
 		return
 		
-	people = frappe.get_all("People", filters={"id": contact_id}, fields=["lead", "account"])
-	if not people:
-		frappe.log_error("people not found")
+	crm_lead_accounts = frappe.get_all("CRM Lead Apollo ID", filters={"apollo_id": contact_id}, fields=["parent as lead", "account"])
+	if not crm_lead_accounts:
+		frappe.log_error("contact not found in CRM Lead Apollo ID")
 		return
 		
-	lead_name = people[0].lead
-	account_name = people[0].account
+	lead_name = crm_lead_accounts[0].lead
+	account_name = crm_lead_accounts[0].account
 	
 	sequence = frappe.get_all("Sequence", filters={"id": sequence_id, "account": account_name}, fields=["campaign"])
 	if not sequence:
