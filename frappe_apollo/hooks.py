@@ -135,6 +135,9 @@ required_apps = ["frappe_controller", "frappe_cadence", "crm"]
 doc_events = {
 	"Cadence Provider": {
 		"on_update": "frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.on_update"
+	},
+	"Communication": {
+		"on_update": "frappe_apollo.apollo.doctype.communication.communication.on_update"
 	}
 }
 
@@ -144,12 +147,12 @@ cadence_providers = {
 
 scheduler_events = {
 	"daily": [
-		"frappe_apollo.apollo.doctype.mailbox.mailbox.queue_get_mailboxes"
+		"frappe_apollo.apollo.email_account.queue_get_email_accounts"
 	]
 }
 
 controller_events = {
-	"frappe_apollo.apollo.doctype.mailbox.mailbox.get_mailboxes": {
+	"frappe_apollo.apollo.email_account.get_email_accounts": {
 		"rate_limit_per_minute": 50,
 		"rate_limit_per_hour": 200,
 		"rate_limit_per_day": 600,
@@ -180,7 +183,8 @@ controller_events = {
 # after_install = "frappe_apollo.setup.after_install"
 
 fixtures = [
-	{"dt": "Custom Field", "filters": [["module", "=", "Apollo"]]}
+	{"dt": "Custom Field", "filters": [["module", "=", "Apollo"]]},
+	{"dt": "Property Setter", "filters": [["module", "in", ["Apollo", "frappe_apollo"]]]}
 ]
 
 
