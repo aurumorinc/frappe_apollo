@@ -4,12 +4,12 @@ from frappe_controller.utils.controller import wait_for_event
 def on_update(doc, method=None):
 	if doc.get_doc_before_save() and doc.get_doc_before_save().status != "Scheduled" and doc.status == "Scheduled":
 		frappe.enqueue(
-			method="frappe_apollo.apollo.doctype.communication.communication.update_a_communication",
+			method="frappe_apollo.apollo.doctype.communication.communication.update_a_contact",
 			queue="medium",
 			comm_name=doc.name
 		)
 
-def update_a_communication(comm_name):
+def update_a_contact(comm_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
 	from frappe_controller.utils.controller import SuspendJob
 	
@@ -117,9 +117,10 @@ def update_a_communication(comm_name):
 	
 	client = ApolloClient(account_name)
 	try:
-		client.update_people(people.apollo_id, custom_fields)
+		client.update_contact(people.apollo_id, custom_fields)
 		comm.db_set("apollo_id", people.apollo_id)
 		comm.db_set("apollo_sync_status", "Synced")
 	except Exception as e:
 		frappe.log_error(title="Failed to sync Communication to Apollo", message=str(e))
 		raise
+
