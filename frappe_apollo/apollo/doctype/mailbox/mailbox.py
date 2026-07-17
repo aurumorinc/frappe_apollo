@@ -1,6 +1,5 @@
 import frappe
 from frappe.model.document import Document
-from frappe_controller.utils.background_jobs import enqueue
 
 class Mailbox(Document):
 	pass
@@ -12,7 +11,7 @@ def queue_get_mailboxes():
 	"""
 	accounts = frappe.get_all("Account", filters={"api_key": ["!=", ""]}) # Simplified check for active
 	for acc in accounts:
-		enqueue(
+		frappe.enqueue(
 			method="frappe_apollo.apollo.doctype.mailbox.mailbox.get_mailboxes",
 			queue="low",
 			account_name=acc.name
@@ -38,14 +37,14 @@ def get_mailboxes(account_name):
 				
 			if frappe.db.exists("Mailbox", email_id):
 				doc = frappe.get_doc("Mailbox", email_id)
-				doc.id = mb.get("id")
+				doc.apollo_id = mb.get("id")
 				doc.account = account_name
 				doc.save()
 			else:
 				frappe.get_doc({
 					"doctype": "Mailbox",
 					"email_id": email_id,
-					"id": mb.get("id"),
+					"apollo_id": mb.get("id"),
 					"account": account_name
 				}).insert()
 	except Exception:
