@@ -138,6 +138,10 @@ doc_events = {
 	},
 	"Communication": {
 		"on_update": "frappe_apollo.apollo.doctype.communication.communication.on_update"
+	},
+	"Multi Channel Cadence": {
+		"before_save": "frappe_apollo.overrides.multi_channel_cadence.before_save",
+		"on_update": "frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.on_update"
 	}
 }
 
@@ -160,13 +164,6 @@ controller_events = {
 		"timeout": 300
 	},
 	"frappe_apollo.apollo.doctype.field.field.create_a_field": {
-		"rate_limit_per_minute": 50,
-		"rate_limit_per_hour": 200,
-		"rate_limit_per_day": 600,
-		"retries": 3,
-		"timeout": 300
-	},
-	"frappe_apollo.apollo.doctype.sequence.sequence.get_sequence_status": {
 		"rate_limit_per_minute": 50,
 		"rate_limit_per_hour": 200,
 		"rate_limit_per_day": 600,
