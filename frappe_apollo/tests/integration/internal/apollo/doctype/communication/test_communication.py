@@ -14,10 +14,8 @@ class TestCommunicationIntegration(IntegrationTestCase):
         def mock_get_value_side_effect(dt, name_or_filters=None, fieldname=None):
             if dt == "Cadence Provider": return 1
             if dt == "User Email": return "Email-Acc-1"
-            if dt == "People": return "people1"
             return "val"
         mock_get_value.side_effect = mock_get_value_side_effect
-        
         
         mock_comm = MagicMock()
         mock_comm.get.return_value = None
@@ -33,14 +31,11 @@ class TestCommunicationIntegration(IntegrationTestCase):
         mock_acc = MagicMock()
         mock_acc.account = "acc1"
         mock_acc.apollo_id = "mb_apollo_1"
-        mock_email_account.apollo_accounts = [mock_acc]
+        mock_email_account.apollo_ids = [mock_acc]
         mock_email_account.get.return_value = [mock_acc]
         
         mock_account = MagicMock()
         mock_account.status = "Active"
-        
-        mock_people = MagicMock()
-        mock_people.apollo_id = "pid1"
         
         mock_sequence = MagicMock()
         mock_sequence.name = "seq1"
@@ -59,13 +54,20 @@ class TestCommunicationIntegration(IntegrationTestCase):
             if doctype == "Multi Channel Cadence": return mock_mcc
             if doctype == "Email Account": return mock_email_account
             if doctype == "Account": return mock_account
-            if doctype == "People": return mock_people
             if doctype == "Sequence": return mock_sequence
             if doctype == "Cadence": return mock_cadence
             return MagicMock()
             
         mock_get_doc.side_effect = mock_get_doc_side_effect
-        mock_get_all.return_value = [{"name": "seq1"}]
+        
+        def get_all_side_effect(*args, **kwargs):
+            if args[0] == "CRM Lead Apollo ID":
+                return [frappe._dict({"apollo_id": "pid1"})]
+            if args[0] == "Sequence":
+                return [{"name": "seq1"}]
+            return []
+            
+        mock_get_all.side_effect = get_all_side_effect
         
         with self.assertRaises(SuspendJob):
             update_a_contact("comm1")
@@ -80,10 +82,8 @@ class TestCommunicationIntegration(IntegrationTestCase):
         def mock_get_value_side_effect(dt, name_or_filters=None, fieldname=None):
             if dt == "Cadence Provider": return 1
             if dt == "User Email": return "Email-Acc-1"
-            if dt == "People": return "people1"
             return "val"
         mock_get_value.side_effect = mock_get_value_side_effect
-        
         
         mock_comm = MagicMock()
         mock_comm.get.return_value = None
@@ -101,14 +101,11 @@ class TestCommunicationIntegration(IntegrationTestCase):
         mock_acc = MagicMock()
         mock_acc.account = "acc1"
         mock_acc.apollo_id = "mb_apollo_1"
-        mock_email_account.apollo_accounts = [mock_acc]
+        mock_email_account.apollo_ids = [mock_acc]
         mock_email_account.get.return_value = [mock_acc]
         
         mock_account = MagicMock()
         mock_account.status = "Active"
-        
-        mock_people = MagicMock()
-        mock_people.apollo_id = "pid1"
         
         mock_sequence = MagicMock()
         mock_sequence.name = "seq1"
@@ -134,7 +131,6 @@ class TestCommunicationIntegration(IntegrationTestCase):
             if doctype == "Multi Channel Cadence": return mock_mcc
             if doctype == "Email Account": return mock_email_account
             if doctype == "Account": return mock_account
-            if doctype == "People": return mock_people
             if doctype == "Sequence": return mock_sequence
             if doctype == "Cadence": return mock_cadence
             if doctype == "Field":
@@ -143,7 +139,15 @@ class TestCommunicationIntegration(IntegrationTestCase):
             return MagicMock()
             
         mock_get_doc.side_effect = mock_get_doc_side_effect
-        mock_get_all.return_value = [{"name": "seq1"}]
+        
+        def get_all_side_effect(*args, **kwargs):
+            if args[0] == "CRM Lead Apollo ID":
+                return [frappe._dict({"apollo_id": "pid1"})]
+            if args[0] == "Sequence":
+                return [{"name": "seq1"}]
+            return []
+            
+        mock_get_all.side_effect = get_all_side_effect
         
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client

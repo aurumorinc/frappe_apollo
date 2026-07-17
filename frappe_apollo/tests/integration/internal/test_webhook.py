@@ -11,8 +11,8 @@ class TestWebhookIntegration(IntegrationTestCase):
         # Clean up
         frappe.db.sql("DELETE FROM `tabAccount`")
         frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account'")
-        frappe.db.sql("DELETE FROM `tabPeople` WHERE account = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabSequence` WHERE account = 'Webhook Account'")
+        frappe.db.sql("DELETE FROM `tabCRM Lead Apollo ID` WHERE account = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabCRM Lead` WHERE first_name = 'Webhook'")
         frappe.db.sql("DELETE FROM `tabMulti Channel Cadence` WHERE cadence_name = 'Webhook Cadence'")
         frappe.db.sql("DELETE FROM `tabCadence` WHERE name = 'Webhook Cadence'")
@@ -31,16 +31,12 @@ class TestWebhookIntegration(IntegrationTestCase):
             "email": "webhook@example.com"
         }).insert(ignore_permissions=True)
 
-        frappe.get_doc({
-            "doctype": "People",
-            "lead": lead.name,
+        lead.append("apollo_ids", {
             "account": "Webhook Account",
-            "id": "contact_123"
-        }).insert(ignore_permissions=True)
+            "apollo_id": "contact_123"
+        })
+        lead.save(ignore_permissions=True)
 
-        # We won't insert Sequence to avoid Campaign LinkValidationError
-        # Instead, we will mock frappe.get_all for Sequence
-        
         cadence = frappe.get_doc({
             "doctype": "Cadence",
             "cadence_name": "Webhook Cadence"
@@ -120,7 +116,7 @@ class TestWebhookIntegration(IntegrationTestCase):
                 return [frappe._dict({"name": comm.name})]
             if doctype == "Multi Channel Cadence":
                 return [frappe._dict({"name": self.mcc_name})]
-            if doctype == "People":
+            if doctype == "CRM Lead Apollo ID":
                 return [frappe._dict({"lead": self.lead_name, "account": "Webhook Account"})]
             return original_get_all(doctype, *args, **kwargs)
 
@@ -159,7 +155,7 @@ class TestWebhookIntegration(IntegrationTestCase):
                 return [frappe._dict({"name": comm.name})]
             if doctype == "Multi Channel Cadence":
                 return [frappe._dict({"name": self.mcc_name})]
-            if doctype == "People":
+            if doctype == "CRM Lead Apollo ID":
                 return [frappe._dict({"lead": self.lead_name, "account": "Webhook Account"})]
             return original_get_all(doctype, *args, **kwargs)
 
@@ -186,7 +182,7 @@ class TestWebhookIntegration(IntegrationTestCase):
                 return [frappe._dict({"campaign": self.cadence_name})]
             if doctype == "Multi Channel Cadence":
                 return [frappe._dict({"name": self.mcc_name})]
-            if doctype == "People":
+            if doctype == "CRM Lead Apollo ID":
                 return [frappe._dict({"lead": self.lead_name, "account": "Webhook Account"})]
             return original_get_all(doctype, *args, **kwargs)
 
@@ -207,9 +203,9 @@ class TestWebhookIntegration(IntegrationTestCase):
             "emailer_campaign_id": "seq_123"
         }
         
-        # Mock get_all to return empty for People
+        # Mock get_all to return empty for CRM Lead Apollo ID
         def mock_get_all_side_effect(doctype, *args, **kwargs):
-            if doctype == "People":
+            if doctype == "CRM Lead Apollo ID":
                 return []
             return []
 
