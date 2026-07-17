@@ -1,23 +1,16 @@
 {
  "actions": [],
  "allow_import": 1,
+ "autoname": "field:label",
  "creation": "2024-05-18 23:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "account",
   "label",
-  "id"
+  "apollo_ids"
  ],
  "fields": [
-  {
-   "fieldname": "account",
-   "fieldtype": "Link",
-   "label": "Account",
-   "options": "Account",
-   "required": 1
-  },
   {
    "fieldname": "label",
    "fieldtype": "Data",
@@ -25,15 +18,15 @@
    "required": 1
   },
   {
-   "fieldname": "apollo_id",
-   "fieldtype": "Data",
-   "label": "Apollo ID",
-   "required": 1
+   "fieldname": "apollo_ids",
+   "fieldtype": "Table",
+   "label": "Apollo IDs",
+   "options": "Field Apollo ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-18 23:00:00.000000",
+ "modified": "2024-05-20 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Apollo",
  "name": "Field",
