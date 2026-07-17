@@ -83,22 +83,26 @@ def get_all_sequence_status():
 			sequence_name=seq_name
 		)
 
-def _assign_people_to_sequence(mcc_name):
+def _assign_contact_to_sequence(mcc_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
 	from frappe_controller.utils.controller import wait_for_event
 	
 	mcc = frappe.get_doc("Multi Channel Cadence", mcc_name)
 	sender = mcc.sender
 	
-	mailbox_id = frappe.db.get_value("User Mailbox", {"parent": sender}, "mailbox")
-	if not mailbox_id:
+	email_account_name = frappe.db.get_value("User Email", {"parent": sender}, "email_account")
+	if not email_account_name:
 		wait_for_event(
-			event_key="doc:User Mailbox:after_insert",
+			event_key="doc:User Email:after_insert",
 			condition=f"argument.get('parent') == '{sender}'"
 		)
 		
-	mailbox = frappe.get_doc("Mailbox", mailbox_id)
-	account_name = mailbox.account
+	email_account = frappe.get_doc("Email Account", email_account_name)
+	if not email_account.get("apollo_accounts"):
+		raise Exception("No Apollo Account mapped to this Email Account.")
+	
+	account_name = email_account.apollo_accounts[0].account
+	apollo_mailbox_id = email_account.apollo_accounts[0].apollo_id
 	
 	people_name = frappe.db.get_value("People", {"lead": mcc.recipient, "account": account_name}, "name")
 	if not people_name:
@@ -135,7 +139,7 @@ def _assign_people_to_sequence(mcc_name):
 	# Call API
 	client = ApolloClient(account_name)
 	try:
-		client.add_people_to_sequence(people.apollo_id, seq_doc.apollo_id, mailbox.apollo_id)
+		client.add_contacts_to_sequence(people.apollo_id, seq_doc.apollo_id, apollo_mailbox_id)
 	except Exception as e:
 		frappe.log_error(title="Failed to assign sequence in Apollo", message=str(e))
 		raise
