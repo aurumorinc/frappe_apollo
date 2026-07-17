@@ -147,12 +147,12 @@ cadence_providers = {
 
 scheduler_events = {
 	"daily": [
-		"frappe_apollo.apollo.email_account.queue_get_email_accounts"
+		"frappe_apollo.apollo.doctype.email_account.email_account.queue_get_email_accounts"
 	]
 }
 
 controller_events = {
-	"frappe_apollo.apollo.email_account.get_email_accounts": {
+	"frappe_apollo.apollo.doctype.email_account.email_account.get_email_accounts": {
 		"rate_limit_per_minute": 50,
 		"rate_limit_per_hour": 200,
 		"rate_limit_per_day": 600,
