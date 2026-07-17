@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class EmailAccountAccount(Document):
+class EmailAccountApolloID(Document):
 	pass
