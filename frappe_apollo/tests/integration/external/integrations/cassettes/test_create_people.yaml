@@ -1,0 +1,98 @@
+interactions:
+- request:
+    body: '{"first_name": "Test", "last_name": "External API", "email": "test_external_api_create@example.com",
+      "run_dedupe": true}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '120'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.33.1
+    method: POST
+    uri: https://api.apollo.io/api/v1/contacts
+  response:
+    body:
+      string: "{\"contact\":{\"contact_roles\":[],\"id\":\"6a0ce2c43855f0002044cf61\",\"first_name\":\"Test\",\"last_name\":\"External
+        Api\",\"name\":\"Test External Api\",\"linkedin_url\":null,\"title\":null,\"contact_stage_id\":\"69d3cbed7bc8d500194ed001\",\"owner_id\":\"69d3cbed7bc8d500194ed14c\",\"creator_id\":\"69d3cbed7bc8d500194ed14c\",\"person_id\":null,\"email_needs_tickling\":false,\"organization_name\":\"Selbstst\xE4ndig\",\"source\":\"api\",\"original_source\":\"api\",\"organization_id\":\"54a21f5774686930c2f8740e\",\"headline\":null,\"photo_url\":null,\"present_raw_address\":null,\"linkedin_uid\":null,\"extrapolated_email_confidence\":null,\"salesforce_id\":null,\"salesforce_lead_id\":null,\"salesforce_contact_id\":null,\"salesforce_account_id\":null,\"crm_owner_id\":null,\"created_at\":\"2026-05-19T22:23:00.453Z\",\"emailer_campaign_ids\":[],\"direct_dial_status\":null,\"direct_dial_enrichment_failed_at\":null,\"email_status\":\"verified\",\"email_source\":null,\"account_id\":null,\"last_activity_date\":null,\"hubspot_vid\":null,\"hubspot_company_id\":null,\"crm_id\":null,\"merged_crm_ids\":null,\"updated_at\":\"2026-05-19T22:23:00.482Z\",\"queued_for_crm_push\":true,\"suggested_from_rule_engine_config_id\":null,\"email_unsubscribed\":null,\"person_deleted\":null,\"call_opted_out\":null,\"godmode_apollo_creator\":null,\"sanitized_phone\":null,\"street_address\":null,\"city\":null,\"state\":null,\"country\":null,\"postal_code\":null,\"formatted_address\":null,\"time_zone\":null,\"label_ids\":[],\"has_pending_email_arcgate_request\":false,\"has_email_arcgate_request\":false,\"existence_level\":\"full\",\"email\":\"test_external_api_create@example.com\",\"email_from_customer\":true,\"typed_custom_fields\":{},\"custom_field_errors\":{},\"crm_record_url\":null,\"email_status_unavailable_reason\":null,\"email_true_status\":\"User
+        Managed\",\"updated_email_true_status\":true,\"source_display_name\":\"Created
+        from API\",\"twitter_url\":null,\"facebook_url\":null,\"contact_campaign_statuses\":[],\"contact_emails\":[{\"email_md5\":\"db312e61348cebeca250fb89d6d8661c\",\"email_sha256\":\"4da2b3e1d0c0c787da4001ee6ad445c21eb0cf5585b7ec252b5d7e732ea1c288\",\"email_status\":\"verified\",\"extrapolated_email_confidence\":null,\"position\":0,\"email\":\"test_external_api_create@example.com\",\"free_domain\":false,\"source\":\"User
+        Managed\",\"third_party_vendor_name\":null,\"vendor_validation_statuses\":[],\"email_needs_tickling\":false,\"email_true_status\":\"User
+        Managed\",\"email_status_unavailable_reason\":null}],\"next_contact_id\":null,\"intent_strength\":null,\"show_intent\":false,\"phone_numbers\":[],\"account_phone_note\":null,\"free_domain\":false,\"email_domain_catchall\":false},\"was_existing\":false,\"labels\":[]}"
+    headers:
+      CF-RAY:
+      - 9fe680e9ef674049-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 19 May 2026 22:23:00 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=vHm_vc8DZTRStnMJkBm51j0kOTL5Ft3uxuuH-MnYoP9IVeouzPLUpwK_4t5xavyQv1cIhRIolZzqC7QFKesKsQ;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=elRbP71gMjopDT643RLllV%2BZzVpf73gZUafkCiSx2YUuro0SMxjGEOrXkE89xHI20je0hiD%2FPmis%2F5Wod51elUhXHQeOL0dO0D9P%2FowWo0A7ZSNkY081QkN%2F4aP5cbaoy9CyCmBXIatgNTO6n2bea9FdfQ7KUiLtudMzmIpMiosKnMRExMiLDNtY4H1XWtCVE057%2B7JoOZoPe0NTIighATsCXT56wCkb5zFvUMZyUbwSf%2B3sn5cLBVy0yIwzNtRsKG0fwaEm5HnK97CuYFGe69RKSMXEhVLFEyk%3D--IHSi8ex1Lo%2BHM4vI--hGCRD2s44eHClO%2BHo%2ByjSw%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=dX4KhfN1p8xMFEIT0OChKjEDwFidj4sNAD5qwFSFuQU-1779229380.145521-1.0.1.1-FRaJP_R2mkvGOjmdpW4_Y_haluRi_JaYF6W6lXKdbKs3MKxBFPWBFMeCSuN3sAk75num8gLfm4iC36qOX6fCUGK7tQ9bcTZVuB1uQaInc6hZ5qSzlPi8TKKsI7tMhoKf;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Tue, 19
+        May 2026 22:53:00 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=edc7b605635b3b69e67938a903f1ef039ebebddf
+      etag:
+      - W/"0c9d9b4e46a721477adb0e54d0e9b6bf"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '595'
+      x-24-hour-usage:
+      - '5'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '195'
+      x-hourly-usage:
+      - '5'
+      x-minute-requests-left:
+      - '48'
+      x-minute-usage:
+      - '2'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - bf0b16d2-cbca-46fe-99bb-4fa8566ef331
+      x-runtime:
+      - '0.247037'
+      x-transaction-id:
+      - ebb42a2b-9678-4385-b742-3c922dac2029
+    status:
+      code: 200
+      message: OK
+version: 1
