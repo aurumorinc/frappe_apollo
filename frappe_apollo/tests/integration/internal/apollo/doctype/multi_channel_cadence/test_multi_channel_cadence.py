@@ -6,7 +6,7 @@ from frappe_controller.utils.controller import SuspendJob
 from unittest.mock import patch, MagicMock
 
 class TestMCCIntegration(IntegrationTestCase):
-    @patch("frappe_controller.utils.controller.wait_for_event", side_effect=SuspendJob("wait"))
+    @patch("frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.wait_for_event", side_effect=SuspendJob("wait"))
     @patch("frappe.db.get_value")
     @patch("frappe.get_doc")
     @patch("frappe.get_all")
@@ -53,7 +53,7 @@ class TestMCCIntegration(IntegrationTestCase):
         with self.assertRaises(SuspendJob):
             _assign_contact_to_sequence("mcc1")
 
-    @patch("frappe_controller.utils.controller.wait_for_event", side_effect=SuspendJob("wait"))
+    @patch("frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.wait_for_event", side_effect=SuspendJob("wait"))
     @patch("frappe.db.get_value")
     @patch("frappe.get_doc")
     @patch("frappe.get_all")
