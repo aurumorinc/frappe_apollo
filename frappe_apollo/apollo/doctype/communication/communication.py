@@ -29,11 +29,11 @@ def update_a_contact(comm_name):
 		)
 	email_account = frappe.get_doc("Email Account", email_account_name)
 	
-	if not email_account.get("apollo_accounts"):
+	if not email_account.get("apollo_ids"):
 		raise Exception("No Apollo Account mapped to this Email Account.")
 	
-	account_name = email_account.apollo_accounts[0].account
-	apollo_id = email_account.apollo_accounts[0].apollo_id
+	account_name = email_account.apollo_ids[0].account
+	apollo_id = email_account.apollo_ids[0].apollo_id
 	
 	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
 	if not is_enabled:
@@ -49,18 +49,16 @@ def update_a_contact(comm_name):
 			condition=f"argument.get('name') == '{account_name}' and argument.get('status') == 'Active'"
 		)
 		
-	people_name = frappe.db.get_value("People", {"lead": mcc.recipient, "account": account_name}, "name")
-	if not people_name:
+	crm_lead_accounts = frappe.get_all("CRM Lead Apollo ID", filters={"parent": mcc.recipient, "account": account_name}, fields=["apollo_id"])
+	if not crm_lead_accounts or not crm_lead_accounts[0].get("apollo_id"):
 		wait_for_event(
-			event_key="doc:People:after_insert",
-			condition=f"argument.get('lead') == '{mcc.recipient}' and argument.get('account') == '{account_name}'"
+			event_key=f"doc:CRM Lead:on_update:{mcc.recipient}",
+			condition=f"any(row.get('account') == '{account_name}' and row.get('apollo_id') for row in argument.get('apollo_ids', []))"
 		)
-	people = frappe.get_doc("People", people_name)
-	if not people.apollo_id:
-		wait_for_event(
-			event_key="doc:People:on_update",
-			condition=f"argument.get('name') == '{people_name}' and argument.get('apollo_id')"
-		)
+		# fetch again after event
+		crm_lead_accounts = frappe.get_all("CRM Lead Apollo ID", filters={"parent": mcc.recipient, "account": account_name}, fields=["apollo_id"])
+		
+	contact_apollo_id = crm_lead_accounts[0].apollo_id
 		
 	sequence = frappe.get_all("Sequence", filters={
 		"cadence": mcc.cadence_name,
@@ -117,10 +115,9 @@ def update_a_contact(comm_name):
 	
 	client = ApolloClient(account_name)
 	try:
-		client.update_contact(people.apollo_id, custom_fields)
-		comm.db_set("apollo_id", people.apollo_id)
+		client.update_contact(contact_apollo_id, custom_fields)
+		comm.db_set("apollo_id", contact_apollo_id)
 		comm.db_set("apollo_sync_status", "Synced")
 	except Exception as e:
 		frappe.log_error(title="Failed to sync Communication to Apollo", message=str(e))
 		raise
-
