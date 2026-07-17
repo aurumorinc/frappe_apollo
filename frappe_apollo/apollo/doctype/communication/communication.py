@@ -20,16 +20,20 @@ def update_a_communication(comm_name):
 		
 	mcc = frappe.get_doc("Multi Channel Cadence", comm.reference_name)
 	
-	# Find Account by looking at User Mailbox (we don't wait for mailbox itself, just get Account)
-	# Actually, the account should be fetched from the People record or MCC sequence.
-	mailbox_id = frappe.db.get_value("User Mailbox", {"parent": mcc.sender}, "mailbox")
-	if not mailbox_id:
+	# Fetch the Email Account via native User Email
+	email_account_name = frappe.db.get_value("User Email", {"parent": mcc.sender}, "email_account")
+	if not email_account_name:
 		wait_for_event(
-			event_key="doc:User Mailbox:after_insert",
+			event_key="doc:User Email:after_insert",
 			condition=f"argument.get('parent') == '{mcc.sender}'"
 		)
-	mailbox = frappe.get_doc("Mailbox", mailbox_id)
-	account_name = mailbox.account
+	email_account = frappe.get_doc("Email Account", email_account_name)
+	
+	if not email_account.get("apollo_accounts"):
+		raise Exception("No Apollo Account mapped to this Email Account.")
+	
+	account_name = email_account.apollo_accounts[0].account
+	apollo_id = email_account.apollo_accounts[0].apollo_id
 	
 	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
 	if not is_enabled:
