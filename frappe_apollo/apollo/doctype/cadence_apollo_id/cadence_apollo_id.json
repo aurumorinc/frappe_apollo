@@ -1,15 +1,15 @@
 {
  "actions": [],
- "allow_bulk_edit": 1,
  "allow_rename": 1,
- "autoname": "hash",
- "creation": "2026-07-17 23:41:33.027675",
+ "creation": "2024-05-20 10:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "account",
-  "apollo_id"
+  "sender",
+  "apollo_id",
+  "status"
  ],
  "fields": [
   {
@@ -21,27 +21,39 @@
    "reqd": 1
   },
   {
+   "fieldname": "sender",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sender",
+   "options": "User",
+   "reqd": 1
+  },
+  {
    "fieldname": "apollo_id",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Apollo ID",
+   "label": "Apollo Sequence ID",
    "reqd": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nInactive"
   }
  ],
- "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-07-17 23:41:33.027675",
+ "modified": "2024-05-20 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Apollo",
- "name": "Email Account Account",
- "naming_rule": "Random",
+ "name": "Cadence Apollo ID",
  "owner": "Administrator",
  "permissions": [],
- "row_format": "Dynamic",
- "rows_threshold_for_grid_search": 20,
- "sort_field": "creation",
+ "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
 }

@@ -8,7 +8,7 @@ def queue_get_email_accounts():
     accounts = frappe.get_all("Account", filters={"api_key": ["!=", ""]})
     for acc in accounts:
         frappe.enqueue(
-            method="frappe_apollo.apollo.email_account.get_email_accounts",
+            method="frappe_apollo.apollo.doctype.email_account.email_account.get_email_accounts",
             queue="low",
             account_name=acc.name
         )
@@ -16,7 +16,7 @@ def queue_get_email_accounts():
 def get_email_accounts(account_name):
     """
     FS Job: Uses ApolloClient.get_email_accounts() to fetch mailboxes.
-    Upserts Email Account records in Frappe with apollo_accounts mapping.
+    Upserts Email Account records in Frappe with apollo_ids mapping.
     """
     from frappe_apollo.integrations.apollo import ApolloClient
     
@@ -38,7 +38,7 @@ def get_email_accounts(account_name):
                 doc = frappe.get_doc("Email Account", email_account_name)
                 # Check if account is already mapped
                 account_found = False
-                for acc in doc.get("apollo_accounts", []):
+                for acc in doc.get("apollo_ids", []):
                     if acc.account == account_name:
                         account_found = True
                         if acc.apollo_id != apollo_id:
@@ -47,7 +47,7 @@ def get_email_accounts(account_name):
                         break
                 
                 if not account_found:
-                    doc.append("apollo_accounts", {
+                    doc.append("apollo_ids", {
                         "account": account_name,
                         "apollo_id": apollo_id
                     })
@@ -59,7 +59,7 @@ def get_email_accounts(account_name):
                     "service": "Apollo",
                     "enable_outgoing": 0,
                     "enable_incoming": 0,
-                    "apollo_accounts": [
+                    "apollo_ids": [
                         {
                             "account": account_name,
                             "apollo_id": apollo_id

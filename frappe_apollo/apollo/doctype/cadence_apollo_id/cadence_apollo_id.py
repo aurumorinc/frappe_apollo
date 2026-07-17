@@ -1,5 +1,5 @@
 import frappe
 from frappe.model.document import Document
 
-class SequenceStep(Document):
+class CadenceApolloID(Document):
 	pass

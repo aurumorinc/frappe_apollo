@@ -7,15 +7,14 @@ class ApolloCadenceProvider(BaseCadenceProvider):
 		pass
 
 def on_update(doc, method=None):
-	# If Apollo provider settings change, all sequences need to self-hydrate
 	if doc.name == "Apollo":
-		# Only enqueue for cadences linked to sequences
-		sequences = frappe.get_all("Sequence", pluck="cadence")
-		unique_cadences = list(set(sequences))
+		# Only enqueue for cadences linked to Apollo
+		cadences = frappe.get_all("Cadence Apollo ID", pluck="parent")
+		unique_cadences = list(set(cadences))
 		from frappe_controller.utils.background_jobs import enqueue
 		for cadence_name in unique_cadences:
 			enqueue(
-				method="frappe_apollo.apollo.doctype.sequence.sequence.on_cadence_update",
+				method="frappe_apollo.apollo.doctype.field.field.provision_cadence_fields",
 				queue="low",
 				cadence_name=cadence_name
 			)

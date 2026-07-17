@@ -1,41 +1,48 @@
 import frappe
 from frappe.tests import UnitTestCase
 from frappe_apollo.apollo.doctype.field.field import provision_a_field
+from frappe.exceptions import DoesNotExistError
 from unittest.mock import patch, MagicMock
 import hashlib
 
 class TestField(UnitTestCase):
+    @patch("frappe_apollo.integrations.apollo.ApolloClient")
     @patch("frappe.db.get_value")
     @patch("frappe.get_doc")
-    def test_provision_a_field_hash(self, mock_get_doc, mock_get_value):
+    def test_provision_a_field_hash(self, mock_get_doc, mock_get_value, mock_client_cls):
         # Setup mocks
-        mock_sequence = MagicMock()
-        mock_sequence.apollo_id = "seq123"
-        mock_sequence.account = "acc1"
+        mock_client = mock_client_cls.return_value
+        mock_client.create_field.return_value = {"typed_custom_fields": [{"id": "apollo_123"}]}
+
+        mock_cadence = MagicMock()
+        mock_cadence.name = "Cad1"
         
+        mock_apollo_id_row = MagicMock()
+        mock_apollo_id_row.status = "Active"
+        mock_apollo_id_row.account = "acc1"
+        mock_apollo_id_row.apollo_id = "seq123"
+        mock_cadence.get.return_value = [mock_apollo_id_row]
+
         mock_step = MagicMock()
-        mock_sequence.sequence_steps = [mock_step]
-        
-        mock_field_doc = MagicMock()
-        mock_field_doc.name = "new_field"
+        mock_step.name = "step1"
         
         def mock_get_doc_side_effect(doctype, *args, **kwargs):
-            if doctype == "Sequence":
-                return mock_sequence
+            if doctype == "Field" and isinstance(args[0], str):
+                raise DoesNotExistError()
             elif isinstance(doctype, dict) and doctype.get("doctype") == "Field":
                 doc = MagicMock()
                 doc.name = "new_field"
+                doc.get.return_value = [] # apollo_ids
                 doc.insert.return_value = doc
                 return doc
             return MagicMock()
             
         mock_get_doc.side_effect = mock_get_doc_side_effect
-        mock_get_value.return_value = None # No existing field
+        mock_get_value.return_value = 1 # Cadence Provider enabled
         
-        provision_a_field("Seq1", 1, "subject")
+        provision_a_field(mock_cadence, mock_step, "subject")
         
-        expected_hash = hashlib.md5("seq123_1_subject".encode()).hexdigest()[:10]
-        expected_label = f"Seq seq123 {expected_hash} Subject"
+        expected_hash = hashlib.md5("Cad1_step1_subject".encode()).hexdigest()[:10]
         
         # Verify db_set was called with the new field name
-        mock_step.db_set.assert_called_once_with("subject_custom_field_id", "new_field")
+        self.assertEqual(mock_step.subject_field, "new_field")

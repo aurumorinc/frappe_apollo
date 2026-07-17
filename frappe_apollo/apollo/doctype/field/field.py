@@ -3,60 +3,38 @@ from frappe.model.document import Document
 import hashlib
 
 class Field(Document):
-	def after_insert(self):
-		self.enqueue_create_a_field()
+	pass
 
-	def enqueue_create_a_field(self):
-		frappe.enqueue(
-			"frappe_apollo.apollo.doctype.field.field.create_a_field",
-			queue="short",
-			field_name=self.name
-		)
+def provision_cadence_fields(cadence_name):
+	cadence = frappe.get_doc("Cadence", cadence_name)
+	
+	schedules = [s for s in (cadence.get("cadence_schedules") or []) if s.reference_doctype == "Email Template"]
+	
+	for step in schedules:
+		for field_type in ["subject", "message"]:
+			provision_a_field(cadence, step, field_type)
+			
+	# Commit any updates to the cadence step's subject_field / message_field
+	cadence.save(ignore_permissions=True)
 
-def create_a_field(field_name):
+def provision_a_field(cadence, step, field_type):
 	from frappe_apollo.integrations.apollo import ApolloClient
-	from frappe_controller.utils.controller import SuspendJob
-
+	
 	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
 	if not is_enabled:
-		raise SuspendJob("Apollo Cadence Provider is disabled.")
-
-	field_doc = frappe.get_doc("Field", field_name)
-	if field_doc.apollo_id:
 		return
 		
-	account = frappe.get_doc("Account", field_doc.account)
-	if account.status != "Active":
-		raise SuspendJob("Apollo Account is not Active.")
-		
-	client = ApolloClient(field_doc.account)
-	try:
-		res = client.create_field(field_doc.label, field_doc.field_type)
-		fields = res.get("typed_custom_fields", [])
-		if fields:
-			apollo_id = fields[0].get("id")
-			field_doc.db_set("apollo_id", apollo_id)
-	except Exception as e:
-		frappe.log_error(title="Apollo Field Creation Failed", message=str(e))
-		raise
-
-def provision_a_field(sequence_name, step_idx, field_type):
-	sequence = frappe.get_doc("Sequence", sequence_name)
-	step = sequence.sequence_steps[step_idx - 1]
-	
-	# MD5 of sequence apollo_id and step index
-	hash_input = f"{sequence.apollo_id}_{step_idx}_{field_type}"
-	md5_hash = hashlib.md5(hash_input.encode()).hexdigest()[:10]
-	label = f"Seq {sequence.apollo_id} {md5_hash} {field_type.capitalize()}"
+	hash_input = f"{cadence.name}_{step.name}_{field_type}"
+	label = f"{hashlib.md5(hash_input.encode()).hexdigest()[:10]}"
 	apollo_type = "string" if field_type == "subject" else "textarea"
 	
-	existing_field = frappe.db.get_value("Field", {"account": sequence.account, "label": label}, "name")
-	field_name = existing_field
-	
-	if not field_name:
+	field_name = None
+	try:
+		field_doc = frappe.get_doc("Field", label)
+		field_name = field_doc.name
+	except frappe.DoesNotExistError:
 		field_doc = frappe.get_doc({
 			"doctype": "Field",
-			"account": sequence.account,
 			"label": label,
 			"field_type": apollo_type
 		})
@@ -64,6 +42,35 @@ def provision_a_field(sequence_name, step_idx, field_type):
 		field_name = field_doc.name
 		
 	if field_type == "subject":
-		step.db_set("subject_custom_field_id", field_name)
+		step.subject_field = field_name
 	else:
-		step.db_set("response_custom_field_id", field_name)
+		step.message_field = field_name
+
+	for apollo_id_row in cadence.get("apollo_ids", []):
+		if apollo_id_row.status != "Active":
+			continue
+			
+		account_name = apollo_id_row.account
+		apollo_sequence_id = apollo_id_row.apollo_id
+		
+		# Check if mapping exists
+		mapping_exists = any(
+			row.account == account_name and row.apollo_sequence_id == apollo_sequence_id
+			for row in field_doc.get("apollo_ids", [])
+		)
+		
+		if not mapping_exists:
+			client = ApolloClient(account_name)
+			try:
+				res = client.create_field(field_doc.label, field_doc.field_type)
+				fields = res.get("typed_custom_fields", [])
+				if fields:
+					apollo_id = fields[0].get("id")
+					field_doc.append("apollo_ids", {
+						"account": account_name,
+						"apollo_sequence_id": apollo_sequence_id,
+						"apollo_id": apollo_id
+					})
+					field_doc.save(ignore_permissions=True)
+			except Exception as e:
+				frappe.log_error(title="Apollo Field Creation Failed", message=str(e))

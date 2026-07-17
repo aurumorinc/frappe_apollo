@@ -1,7 +1,7 @@
 import frappe
 from frappe.tests import IntegrationTestCase
 from unittest.mock import patch, MagicMock
-from frappe_apollo.apollo.email_account import queue_get_email_accounts, get_email_accounts
+from frappe_apollo.apollo.doctype.email_account.email_account import queue_get_email_accounts, get_email_accounts
 
 class TestEmailAccountIntegration(IntegrationTestCase):
     @classmethod
@@ -37,7 +37,7 @@ class TestEmailAccountIntegration(IntegrationTestCase):
         accounts = frappe.get_all("Email Account", filters={"email_id": ["in", ("test1@example.com", "test2@example.com")]})
         for acc in accounts:
             frappe.delete_doc("Email Account", acc.name, force=1, ignore_permissions=True)
-        frappe.db.sql("DELETE FROM `tabEmail Account Account`")
+        frappe.db.sql("DELETE FROM `tabEmail Account Apollo ID`")
         frappe.db.commit()
 
     def setUp(self):
@@ -86,9 +86,9 @@ class TestEmailAccountIntegration(IntegrationTestCase):
         mb_doc = frappe.get_doc("Email Account", mailboxes[0].name)
         self.assertEqual(mb_doc.email_id, "test1@example.com")
         self.assertEqual(mb_doc.service, "Apollo")
-        self.assertEqual(len(mb_doc.get("apollo_accounts")), 1)
-        self.assertEqual(mb_doc.apollo_accounts[0].account, "Mailbox Test Account")
-        self.assertEqual(mb_doc.apollo_accounts[0].apollo_id, "mailbox_id_1")
+        self.assertEqual(len(mb_doc.get("apollo_ids")), 1)
+        self.assertEqual(mb_doc.apollo_ids[0].account, "Mailbox Test Account")
+        self.assertEqual(mb_doc.apollo_ids[0].apollo_id, "mailbox_id_1")
 
     @patch("frappe_apollo.integrations.apollo.ApolloClient")
     def test_get_email_accounts_append(self, mock_client_cls):
@@ -98,7 +98,7 @@ class TestEmailAccountIntegration(IntegrationTestCase):
             "service": "Apollo",
             "enable_outgoing": 0,
             "enable_incoming": 0,
-            "apollo_accounts": [
+            "apollo_ids": [
                 {
                     "account": "Mailbox Test Account",
                     "apollo_id": "mailbox_id_1"
@@ -125,10 +125,10 @@ class TestEmailAccountIntegration(IntegrationTestCase):
         mb_doc = frappe.get_doc("Email Account", mailboxes[0].name)
         
         # It should now have 2 apollo accounts
-        self.assertEqual(len(mb_doc.get("apollo_accounts")), 2)
-        accounts = [acc.account for acc in mb_doc.get("apollo_accounts")]
+        self.assertEqual(len(mb_doc.get("apollo_ids")), 2)
+        accounts = [acc.account for acc in mb_doc.get("apollo_ids")]
         self.assertIn("Mailbox Test Account", accounts)
         self.assertIn("Another Test Account", accounts)
         
-        alt_acc = next(acc for acc in mb_doc.apollo_accounts if acc.account == "Another Test Account")
+        alt_acc = next(acc for acc in mb_doc.apollo_ids if acc.account == "Another Test Account")
         self.assertEqual(alt_acc.apollo_id, "mailbox_id_1_alt")
