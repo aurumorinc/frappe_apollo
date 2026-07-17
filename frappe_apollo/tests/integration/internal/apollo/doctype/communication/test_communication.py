@@ -1,6 +1,6 @@
 import frappe
 from frappe.tests import IntegrationTestCase
-from frappe_apollo.apollo.doctype.communication.communication import update_a_communication
+from frappe_apollo.apollo.doctype.communication.communication import update_a_contact
 from frappe_controller.utils.controller import SuspendJob
 from unittest.mock import patch, MagicMock
 
@@ -13,8 +13,9 @@ class TestCommunicationIntegration(IntegrationTestCase):
         # Setup mocks
         def mock_get_value_side_effect(dt, name_or_filters=None, fieldname=None):
             if dt == "Cadence Provider": return 1
-            if isinstance(name_or_filters, dict): return "val" if fieldname == "mailbox" else "people1"
-            return "val" if name_or_filters == "mailbox" else "people1"
+            if dt == "User Email": return "Email-Acc-1"
+            if dt == "People": return "people1"
+            return "val"
         mock_get_value.side_effect = mock_get_value_side_effect
         
         
@@ -28,8 +29,12 @@ class TestCommunicationIntegration(IntegrationTestCase):
         mock_mcc.recipient = "lead1"
         mock_mcc.cadence_name = "cad1"
         
-        mock_mailbox = MagicMock()
-        mock_mailbox.account = "acc1"
+        mock_email_account = MagicMock()
+        mock_acc = MagicMock()
+        mock_acc.account = "acc1"
+        mock_acc.apollo_id = "mb_apollo_1"
+        mock_email_account.apollo_accounts = [mock_acc]
+        mock_email_account.get.return_value = [mock_acc]
         
         mock_account = MagicMock()
         mock_account.status = "Active"
@@ -52,7 +57,7 @@ class TestCommunicationIntegration(IntegrationTestCase):
             doctype = args[0] if args and isinstance(args[0], str) else (args[0].get('doctype') if args else kwargs.get('doctype'))
             if doctype == "Communication": return mock_comm
             if doctype == "Multi Channel Cadence": return mock_mcc
-            if doctype == "Mailbox": return mock_mailbox
+            if doctype == "Email Account": return mock_email_account
             if doctype == "Account": return mock_account
             if doctype == "People": return mock_people
             if doctype == "Sequence": return mock_sequence
@@ -63,7 +68,7 @@ class TestCommunicationIntegration(IntegrationTestCase):
         mock_get_all.return_value = [{"name": "seq1"}]
         
         with self.assertRaises(SuspendJob):
-            update_a_communication("comm1")
+            update_a_contact("comm1")
 
     @patch("frappe_apollo.apollo.doctype.communication.communication.wait_for_event", side_effect=SuspendJob("wait"))
     @patch("frappe.db.get_value")
@@ -74,8 +79,9 @@ class TestCommunicationIntegration(IntegrationTestCase):
         # Setup mocks
         def mock_get_value_side_effect(dt, name_or_filters=None, fieldname=None):
             if dt == "Cadence Provider": return 1
-            if isinstance(name_or_filters, dict): return "val" if fieldname == "mailbox" else "people1"
-            return "val" if name_or_filters == "mailbox" else "people1"
+            if dt == "User Email": return "Email-Acc-1"
+            if dt == "People": return "people1"
+            return "val"
         mock_get_value.side_effect = mock_get_value_side_effect
         
         
@@ -91,8 +97,12 @@ class TestCommunicationIntegration(IntegrationTestCase):
         mock_mcc.recipient = "lead1"
         mock_mcc.cadence_name = "cad1"
         
-        mock_mailbox = MagicMock()
-        mock_mailbox.account = "acc1"
+        mock_email_account = MagicMock()
+        mock_acc = MagicMock()
+        mock_acc.account = "acc1"
+        mock_acc.apollo_id = "mb_apollo_1"
+        mock_email_account.apollo_accounts = [mock_acc]
+        mock_email_account.get.return_value = [mock_acc]
         
         mock_account = MagicMock()
         mock_account.status = "Active"
@@ -122,7 +132,7 @@ class TestCommunicationIntegration(IntegrationTestCase):
             name = args[1] if len(args) > 1 else kwargs.get('name')
             if doctype == "Communication": return mock_comm
             if doctype == "Multi Channel Cadence": return mock_mcc
-            if doctype == "Mailbox": return mock_mailbox
+            if doctype == "Email Account": return mock_email_account
             if doctype == "Account": return mock_account
             if doctype == "People": return mock_people
             if doctype == "Sequence": return mock_sequence
@@ -138,6 +148,6 @@ class TestCommunicationIntegration(IntegrationTestCase):
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
         
-        update_a_communication("comm1")
+        update_a_contact("comm1")
         
-        mock_client.update_people.assert_called_once_with("pid1", {"af1": "Test Sub", "af2": "Test Content"})
+        mock_client.update_contact.assert_called_once_with("pid1", {"af1": "Test Sub", "af2": "Test Content"})

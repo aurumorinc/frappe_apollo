@@ -12,7 +12,7 @@ class Account(Document):
 			
 	def after_insert(self):
 		frappe.enqueue(
-			method="frappe_apollo.apollo.doctype.mailbox.mailbox.get_mailboxes",
+			method="frappe_apollo.apollo.email_account.get_email_accounts",
 			queue="low",
 			account_name=self.name
 		)

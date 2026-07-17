@@ -4,12 +4,12 @@ from frappe.model.document import Document
 class People(Document):
 	def after_insert(self):
 		frappe.enqueue(
-			method="frappe_apollo.apollo.doctype.people.people.create_people",
+			method="frappe_apollo.apollo.doctype.people.people.create_a_contact",
 			queue="short",
 			people_name=self.name
 		)
 
-def create_people(people_name):
+def create_a_contact(people_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
 	from frappe_controller.utils.controller import SuspendJob
 	
@@ -35,29 +35,32 @@ def create_people(people_name):
 			"email": lead.email,
 			"organization_name": lead.organization
 		}
-		apollo_id = client.create_people(lead_data)
+		apollo_id = client.create_contact(lead_data)
 		if apollo_id:
 			people.db_set("apollo_id", apollo_id)
 	except Exception as e:
 		frappe.log_error(title="Failed to create People in Apollo", message=str(e))
 		raise
 
-def _create_people(mcc_name):
+def _create_a_contact(mcc_name):
 	from frappe_controller.utils.controller import wait_for_event
 	
 	mcc = frappe.get_doc("Multi Channel Cadence", mcc_name)
 	sender = mcc.sender
 	
-	# Find Mailbox to get Account
-	mailbox_id = frappe.db.get_value("User Mailbox", {"parent": sender}, "mailbox")
-	if not mailbox_id:
+	# Find Email Account to get Apollo Account
+	email_account_name = frappe.db.get_value("User Email", {"parent": sender}, "email_account")
+	if not email_account_name:
 		wait_for_event(
-			event_key="doc:User Mailbox:after_insert",
+			event_key="doc:User Email:after_insert",
 			condition=f"argument.get('parent') == '{sender}'"
 		)
 		
-	mailbox = frappe.get_doc("Mailbox", mailbox_id)
-	account_name = mailbox.account
+	email_account = frappe.get_doc("Email Account", email_account_name)
+	if not email_account.get("apollo_accounts"):
+		raise Exception("No Apollo Account mapped to this Email Account.")
+	
+	account_name = email_account.apollo_accounts[0].account
 	
 	# Wait for Apollo Settings & Account
 	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
