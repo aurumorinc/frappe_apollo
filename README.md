@@ -22,7 +22,7 @@ bench install-app frappe_apollo
 
 ## Configuration
 
-1. Navigate to **Apollo Settings** in your Frappe instance and enable the integration.
+1. Navigate to **Cadence Provider** in your Frappe instance and enable the Apollo integration.
 2. Create a new **Account** document.
 3. Choose your authentication method:
    - **API Key**: Enter your Apollo Master API Key.

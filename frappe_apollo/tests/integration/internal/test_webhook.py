@@ -76,7 +76,7 @@ class TestWebhookIntegration(IntegrationTestCase):
         with self.assertRaises(AuthenticationError):
             handle()
 
-    @patch("frappe_apollo.webhook.enqueue")
+    @patch("frappe.enqueue")
     @patch("frappe.get_request_header")
     def test_security_authorized(self, mock_header, mock_enqueue):
         # We need to access get_password, so the doc needs it

@@ -1,6 +1,5 @@
 import frappe
 from frappe.model.document import Document
-from frappe_controller.utils.background_jobs import enqueue
 from urllib.parse import urlparse, urlunparse
 
 class Account(Document):
@@ -12,7 +11,7 @@ class Account(Document):
 			doc.save()
 			
 	def after_insert(self):
-		enqueue(
+		frappe.enqueue(
 			method="frappe_apollo.apollo.doctype.mailbox.mailbox.get_mailboxes",
 			queue="low",
 			account_name=self.name

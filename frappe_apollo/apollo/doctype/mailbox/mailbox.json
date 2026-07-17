@@ -20,9 +20,9 @@
    "required": 1
   },
   {
-   "fieldname": "id",
+   "fieldname": "apollo_id",
    "fieldtype": "Data",
-   "label": "ID",
+   "label": "Apollo ID",
    "required": 1
   },
   {

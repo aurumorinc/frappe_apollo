@@ -132,7 +132,11 @@ required_apps = ["frappe_controller", "frappe_cadence", "crm"]
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {}
+doc_events = {
+	"Cadence Provider": {
+		"on_update": "frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.on_update"
+	}
+}
 
 cadence_providers = {
 	"Apollo": "frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.ApolloCadenceProvider"
@@ -152,7 +156,14 @@ controller_events = {
 		"retries": 3,
 		"timeout": 300
 	},
-	"frappe_apollo.apollo.doctype.sequence.sequence.provision_custom_field": {
+	"frappe_apollo.apollo.doctype.field.field.create_a_field": {
+		"rate_limit_per_minute": 50,
+		"rate_limit_per_hour": 200,
+		"rate_limit_per_day": 600,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.sequence.sequence.get_sequence_status": {
 		"rate_limit_per_minute": 50,
 		"rate_limit_per_hour": 200,
 		"rate_limit_per_day": 600,
@@ -160,16 +171,6 @@ controller_events = {
 		"timeout": 300
 	},
 	"frappe_apollo.webhook.process_webhook": {
-		"rate_limit_per_minute": 50,
-		"retries": 3,
-		"timeout": 300
-	},
-	"frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.async_sync_lead_and_assign_sequence": {
-		"rate_limit_per_minute": 50,
-		"retries": 3,
-		"timeout": 300
-	},
-	"frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.async_sync_communication_to_apollo": {
 		"rate_limit_per_minute": 50,
 		"retries": 3,
 		"timeout": 300

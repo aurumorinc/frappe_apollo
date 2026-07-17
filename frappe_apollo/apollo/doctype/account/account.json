@@ -53,6 +53,13 @@
    "fieldname": "webhook_bearer_token",
    "fieldtype": "Password",
    "label": "Webhook Bearer Token"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nUnauthorized",
+   "default": "Active"
   }
  ],
  "index_web_pages_for_search": 1,

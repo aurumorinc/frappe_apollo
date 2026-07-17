@@ -21,7 +21,7 @@ class TestMailboxIntegration(IntegrationTestCase):
         frappe.db.rollback()
         super().tearDownClass()
 
-    @patch("frappe_apollo.apollo.doctype.mailbox.mailbox.enqueue")
+    @patch("frappe.enqueue")
     def test_queue_get_mailboxes(self, mock_enqueue):
         queue_get_mailboxes()
         # Should enqueue one or more jobs depending on total accounts, but at least for our Test Account
@@ -54,9 +54,9 @@ class TestMailboxIntegration(IntegrationTestCase):
 
         mock_client.get_email_accounts.assert_called_once()
 
-        mailboxes = frappe.get_all("Mailbox", filters={"account": "Mailbox Test Account"}, fields=["email_id", "id"])
+        mailboxes = frappe.get_all("Mailbox", filters={"account": "Mailbox Test Account"}, fields=["email_id", "apollo_id"])
         self.assertEqual(len(mailboxes), 1)
         
         # Verify properties
-        m1 = next(m for m in mailboxes if m.id == "mailbox_id_1")
+        m1 = next(m for m in mailboxes if m.apollo_id == "mailbox_id_1")
         self.assertEqual(m1.email_id, "test1@example.com")
