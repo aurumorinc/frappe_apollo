@@ -1,6 +1,5 @@
 import frappe
 from frappe.model.document import Document
-from frappe_controller.utils.background_jobs import enqueue
 
 class Sequence(Document):
 	def before_save(self):
@@ -31,7 +30,7 @@ class Sequence(Document):
 	def _enqueue_provision_fields(self):
 		for idx, step in enumerate(self.sequence_steps, 1):
 			if not step.subject_custom_field_id:
-				enqueue(
+				frappe.enqueue(
 					method="frappe_apollo.apollo.doctype.field.field.provision_a_field",
 					queue="low",
 					sequence_name=self.name,
@@ -40,7 +39,7 @@ class Sequence(Document):
 				)
 				
 			if not step.response_custom_field_id:
-				enqueue(
+				frappe.enqueue(
 					method="frappe_apollo.apollo.doctype.field.field.provision_a_field",
 					queue="low",
 					sequence_name=self.name,
@@ -51,11 +50,11 @@ class Sequence(Document):
 def get_sequence_status(sequence_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
 	from frappe_controller.utils.controller import SuspendJob
-	
-	settings = frappe.get_single("Apollo Settings")
-	if not settings.enabled:
-		raise SuspendJob("Apollo Settings is disabled.")
-		
+
+	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
+	if not is_enabled:
+		raise SuspendJob("Apollo Cadence Provider is disabled.")
+
 	sequence = frappe.get_doc("Sequence", sequence_name)
 	account = frappe.get_doc("Account", sequence.account)
 	if account.status != "Active":
