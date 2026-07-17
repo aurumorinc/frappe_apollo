@@ -16,11 +16,11 @@ class Field(Document):
 def create_a_field(field_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
 	from frappe_controller.utils.controller import SuspendJob
-	
-	settings = frappe.get_single("Apollo Settings")
-	if not settings.enabled:
-		raise SuspendJob("Apollo Settings is disabled.")
-		
+
+	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
+	if not is_enabled:
+		raise SuspendJob("Apollo Cadence Provider is disabled.")
+
 	field_doc = frappe.get_doc("Field", field_name)
 	if field_doc.apollo_id:
 		return
