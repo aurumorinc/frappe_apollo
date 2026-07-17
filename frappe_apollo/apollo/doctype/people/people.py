@@ -1,10 +1,9 @@
 import frappe
 from frappe.model.document import Document
-from frappe_controller.utils.background_jobs import enqueue
 
 class People(Document):
 	def after_insert(self):
-		enqueue(
+		frappe.enqueue(
 			method="frappe_apollo.apollo.doctype.people.people.create_people",
 			queue="short",
 			people_name=self.name
@@ -14,9 +13,9 @@ def create_people(people_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
 	from frappe_controller.utils.controller import SuspendJob
 	
-	settings = frappe.get_single("Apollo Settings")
-	if not settings.enabled:
-		raise SuspendJob("Apollo Settings is disabled.")
+	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
+	if not is_enabled:
+		raise SuspendJob("Apollo Cadence Provider is disabled.")
 		
 	people = frappe.get_doc("People", people_name)
 	if people.apollo_id:
@@ -61,10 +60,10 @@ def _create_people(mcc_name):
 	account_name = mailbox.account
 	
 	# Wait for Apollo Settings & Account
-	settings = frappe.get_single("Apollo Settings")
-	if not settings.enabled:
+	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
+	if not is_enabled:
 		wait_for_event(
-			event_key="doc:Apollo Settings:on_update",
+			event_key="doc:Cadence Provider:on_update:Apollo",
 			condition="argument.get('enabled') == 1"
 		)
 		
