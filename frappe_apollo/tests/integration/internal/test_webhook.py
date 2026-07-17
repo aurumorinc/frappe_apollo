@@ -149,8 +149,6 @@ class TestWebhookIntegration(IntegrationTestCase):
 
         original_get_all = frappe.get_all
         def mock_get_all_side_effect(doctype, *args, **kwargs):
-            if doctype == "Sequence":
-                return [frappe._dict({"campaign": self.cadence_name})]
             if doctype == "Communication":
                 return [frappe._dict({"name": comm.name})]
             if doctype == "Multi Channel Cadence":
@@ -178,8 +176,6 @@ class TestWebhookIntegration(IntegrationTestCase):
 
         original_get_all = frappe.get_all
         def mock_get_all_side_effect(doctype, *args, **kwargs):
-            if doctype == "Sequence":
-                return [frappe._dict({"campaign": self.cadence_name})]
             if doctype == "Multi Channel Cadence":
                 return [frappe._dict({"name": self.mcc_name})]
             if doctype == "CRM Lead Apollo ID":

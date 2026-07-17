@@ -1,8 +1,7 @@
 import frappe
 from frappe.tests import IntegrationTestCase
-from frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence import add_a_contact_to_sequence
+from frappe_apollo.overrides.multi_channel_cadence import add_a_contact_to_sequence, _assign_contact_to_sequence
 from frappe_apollo.apollo.doctype.crm_lead.crm_lead import _create_a_contact
-from frappe_apollo.apollo.doctype.sequence.sequence import _assign_contact_to_sequence
 from frappe_controller.utils.controller import SuspendJob
 from unittest.mock import patch, MagicMock
 
@@ -23,6 +22,7 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_mcc.sender = "user1"
         mock_mcc.recipient = "lead1"
         mock_mcc.cadence_name = "cad1"
+        mock_mcc.apollo_account = None
         
         mock_email_account = MagicMock()
         mock_acc = MagicMock()
@@ -34,17 +34,11 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_account = MagicMock()
         mock_account.status = "Active"
         
-        mock_sequence = MagicMock()
-        mock_sequence.status = "Inactive" # This should cause wait
-        mock_sequence.apollo_id = "seq1"
-        mock_sequence.name = "seq_doc_1"
-        
         def mock_get_doc_side_effect(*args, **kwargs):
             doctype = args[0] if args and isinstance(args[0], str) else (args[0].get('doctype') if args else kwargs.get('doctype'))
             if doctype == "Multi Channel Cadence": return mock_mcc
             if doctype == "Email Account": return mock_email_account
             if doctype == "Account": return mock_account
-            if doctype == "Sequence": return mock_sequence
             return MagicMock()
             
         mock_get_doc.side_effect = mock_get_doc_side_effect
@@ -52,8 +46,6 @@ class TestMCCIntegration(IntegrationTestCase):
         def get_all_side_effect(*args, **kwargs):
             if args[0] == "CRM Lead Apollo ID":
                 return [frappe._dict({"apollo_id": "pid1"})]
-            if args[0] == "Sequence":
-                return [{"name": "seq_doc_1"}]
             return []
             
         mock_get_all.side_effect = get_all_side_effect
@@ -79,6 +71,8 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_mcc.sender = "user1"
         mock_mcc.recipient = "lead1"
         mock_mcc.cadence_name = "cad1"
+        mock_mcc.apollo_account = "acc1"
+        mock_mcc.apollo_sequence_id = "seq1"
         
         mock_email_account = MagicMock()
         mock_acc = MagicMock()
@@ -89,11 +83,6 @@ class TestMCCIntegration(IntegrationTestCase):
         
         mock_account = MagicMock()
         mock_account.status = "Active"
-        
-        mock_sequence = MagicMock()
-        mock_sequence.status = "Active"
-        mock_sequence.apollo_id = "seq1"
-        mock_sequence.name = "seq_doc_1"
         
         mock_lead = MagicMock()
         mock_lead_acc = MagicMock()
@@ -107,7 +96,6 @@ class TestMCCIntegration(IntegrationTestCase):
             if doctype == "Email Account": return mock_email_account
             if doctype == "Account": return mock_account
             if doctype == "CRM Lead": return mock_lead
-            if doctype == "Sequence": return mock_sequence
             return MagicMock()
             
         mock_get_doc.side_effect = mock_get_doc_side_effect
@@ -115,8 +103,6 @@ class TestMCCIntegration(IntegrationTestCase):
         def get_all_side_effect(*args, **kwargs):
             if args[0] == "CRM Lead Apollo ID":
                 return [frappe._dict({"apollo_id": "pid1"})]
-            if args[0] == "Sequence":
-                return [{"name": "seq_doc_1"}]
             return []
             
         mock_get_all.side_effect = get_all_side_effect
