@@ -1,10 +1,9 @@
 import frappe
-from frappe_controller.utils.background_jobs import enqueue
 from frappe_controller.utils.controller import wait_for_event
 
 def on_update(doc, method=None):
 	if doc.get_doc_before_save() and doc.get_doc_before_save().status != "Scheduled" and doc.status == "Scheduled":
-		enqueue(
+		frappe.enqueue(
 			method="frappe_apollo.apollo.doctype.communication.communication.update_a_communication",
 			queue="medium",
 			comm_name=doc.name
@@ -32,10 +31,10 @@ def update_a_communication(comm_name):
 	mailbox = frappe.get_doc("Mailbox", mailbox_id)
 	account_name = mailbox.account
 	
-	settings = frappe.get_single("Apollo Settings")
-	if not settings.enabled:
+	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
+	if not is_enabled:
 		wait_for_event(
-			event_key="doc:Apollo Settings:on_update",
+			event_key="doc:Cadence Provider:on_update:Apollo",
 			condition="argument.get('enabled') == 1"
 		)
 		
