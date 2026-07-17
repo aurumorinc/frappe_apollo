@@ -1,6 +1,5 @@
 import frappe
 from frappe import _
-from frappe_controller.utils.background_jobs import enqueue
 
 @frappe.whitelist(allow_guest=True)
 def handle():
@@ -27,7 +26,7 @@ def handle():
 	payload = frappe.request.get_json()
 	
 	# Enqueue FS Job
-	enqueue(
+	frappe.enqueue(
 		method="frappe_apollo.webhook.process_webhook",
 		queue="low",
 		payload=payload
