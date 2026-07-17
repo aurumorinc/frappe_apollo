@@ -1,6 +1,5 @@
 import frappe
 from frappe import _
-from frappe_controller.utils.background_jobs import enqueue
 
 def update_contact(communication_name):
 	"""
@@ -16,11 +15,11 @@ def update_contact(communication_name):
 	mcc = frappe.get_doc("Multi Channel Campaign", comm.reference_name)
 	
 	# Check Provider Status
-	settings = frappe.get_doc("Apollo Settings")
-	if not settings.enable:
+	is_enabled = frappe.db.get_value("Cadence Provider", "Apollo", "enabled")
+	if not is_enabled:
 		wait_for_event(
-			event_key="doc:Apollo Settings:on_update",
-			condition="argument.get('enable') == 1"
+			event_key="doc:Cadence Provider:on_update:Apollo",
+			condition="argument.get('enabled') == 1"
 		)
 
 	# Find Sequence
