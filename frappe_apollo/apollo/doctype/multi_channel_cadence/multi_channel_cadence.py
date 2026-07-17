@@ -12,7 +12,7 @@ def on_update(doc, method=None):
 
 def add_a_contact_to_sequence(mcc_name):
 	frappe.enqueue(
-		method="frappe_apollo.apollo.lead._sync_lead_with_apollo",
+		method="frappe_apollo.apollo.doctype.crm_lead.crm_lead._create_a_contact",
 		queue="medium",
 		mcc_name=mcc_name
 	)
