@@ -1,6 +1,6 @@
 import frappe
 from frappe.tests import UnitTestCase
-from frappe_apollo.apollo.doctype.cadence.cadence import _provision_sequences, _setup_sequence_steps
+from frappe_apollo.apollo.doctype.cadence.cadence import _provision_sequences, _get_sequence_steps
 from unittest.mock import patch, MagicMock
 
 class TestCadenceProvisioning(UnitTestCase):
@@ -22,12 +22,13 @@ class TestCadenceProvisioning(UnitTestCase):
         mock_client = mock_client_cls.return_value
         mock_client.create_sequence.return_value = "seq_123"
         
-        _provision_sequences("Cad1")
+        _provision_sequences("Cad1", emailer_steps=[])
         
         mock_client.create_sequence.assert_called_once_with(
             name="Test Cadence - test@example.com",
             permissions="team_can_use",
-            active=True
+            active=True,
+            emailer_steps=[]
         )
         mock_cadence.append.assert_called_once_with("apollo_ids", {
             "account": "Account1",
@@ -37,9 +38,8 @@ class TestCadenceProvisioning(UnitTestCase):
         })
         mock_cadence.save.assert_called_once_with(ignore_permissions=True)
 
-    @patch("frappe_apollo.apollo.doctype.cadence.cadence.ApolloClient")
     @patch("frappe.get_doc")
-    def test_setup_sequence_steps(self, mock_get_doc, mock_client_cls):
+    def test_get_sequence_steps(self, mock_get_doc):
         mock_cadence = MagicMock()
         mock_cadence.name = "Cad1"
         
@@ -61,14 +61,11 @@ class TestCadenceProvisioning(UnitTestCase):
         mock_sch3.get.side_effect = lambda k: "lbl_subject_step3" if k == "subject_field" else "lbl_message_step3"
         
         mock_cadence.cadence_schedules = [mock_sch1, mock_sch2, mock_sch3]
-        mock_cadence.apollo_ids = [MagicMock(apollo_id="seq_123", status="Active", account="Account1")]
-        mock_cadence.get.side_effect = lambda k: mock_cadence.cadence_schedules if k == "cadence_schedules" else mock_cadence.apollo_ids
+        mock_cadence.get.side_effect = lambda k: mock_cadence.cadence_schedules if k == "cadence_schedules" else []
         
         mock_get_doc.return_value = mock_cadence
         
-        mock_client = mock_client_cls.return_value
-        
-        _setup_sequence_steps("Cad1")
+        emailer_steps = _get_sequence_steps("Cad1")
         
         # Verify accumulated wait
         # Step1: Wait = 2
@@ -81,7 +78,8 @@ class TestCadenceProvisioning(UnitTestCase):
                 "wait_time": 2,
                 "wait_mode": "day",
                 "emailer_touches": [{
-                    "type": "auto_email",
+                    "type": "new_thread",
+                    "status": "approved",
                     "include_signature": True,
                     "emailer_template": {
                         "subject": "{{lbl_subject_step1}}",
@@ -94,7 +92,8 @@ class TestCadenceProvisioning(UnitTestCase):
                 "wait_time": 4, # 3 from Other Channel + 1 from Email Template
                 "wait_mode": "day",
                 "emailer_touches": [{
-                    "type": "auto_email",
+                    "type": "new_thread",
+                    "status": "approved",
                     "include_signature": True,
                     "emailer_template": {
                         "subject": "{{lbl_subject_step3}}",
@@ -104,7 +103,4 @@ class TestCadenceProvisioning(UnitTestCase):
             }
         ]
         
-        mock_client.update_sequence.assert_called_once_with(
-            "seq_123",
-            {"emailer_steps": expected_emailer_steps}
-        )
+        self.assertEqual(emailer_steps, expected_emailer_steps)

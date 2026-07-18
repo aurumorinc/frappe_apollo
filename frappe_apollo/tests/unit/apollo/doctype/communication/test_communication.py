@@ -90,8 +90,8 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc.apollo_sequence_id = "Seq-1"
         
         mock_account = MagicMock()
-        mock_account.status = "Active"
-
+        mock_account.status = "Authorized"
+        
         mock_get_doc.side_effect = [mock_comm, mock_mcc, mock_account]
         
         def mock_get_value_side_effect(*args, **kwargs):
@@ -131,7 +131,7 @@ class TestCommunicationOverride(UnitTestCase):
         mock_mcc.apollo_sequence_id = "Seq-1"
         
         mock_account = MagicMock()
-        mock_account.status = "Active"
+        mock_account.status = "Authorized"
         
         mock_cadence = MagicMock()
         mock_sch = MagicMock()
