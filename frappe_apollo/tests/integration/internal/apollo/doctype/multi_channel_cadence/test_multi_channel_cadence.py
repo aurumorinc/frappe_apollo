@@ -6,6 +6,15 @@ from frappe_controller.utils.controller import SuspendJob
 from unittest.mock import patch, MagicMock
 
 class TestMCCIntegration(IntegrationTestCase):
+    @classmethod
+    def tearDownClass(cls):
+        frappe.db.rollback()
+        super().tearDownClass()
+
+    def tearDown(self):
+        frappe.db.rollback()
+        super().tearDown()
+
     @patch("frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.wait_for_event", side_effect=SuspendJob("wait"))
     @patch("frappe.db.get_value")
     @patch("frappe.get_doc")
@@ -21,7 +30,7 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_mcc = MagicMock()
         mock_mcc.sender = "user1"
         mock_mcc.recipient = "lead1"
-        mock_mcc.cadence_name = "cad1"
+        mock_mcc.cadence = "cad1"
         mock_mcc.apollo_account = None
         
         mock_email_account = MagicMock()

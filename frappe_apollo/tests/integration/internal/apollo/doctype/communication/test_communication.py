@@ -5,6 +5,15 @@ from frappe_controller.utils.controller import SuspendJob
 from unittest.mock import patch, MagicMock
 
 class TestCommunicationIntegration(IntegrationTestCase):
+    @classmethod
+    def tearDownClass(cls):
+        frappe.db.rollback()
+        super().tearDownClass()
+
+    def tearDown(self):
+        frappe.db.rollback()
+        super().tearDown()
+
     @patch("frappe_apollo.apollo.doctype.communication.communication.wait_for_event", side_effect=SuspendJob("wait"))
     @patch("frappe.db.get_value")
     @patch("frappe.get_doc")

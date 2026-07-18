@@ -9,8 +9,9 @@ class TestWebhookIntegration(IntegrationTestCase):
     def setUpClass(cls):
         super().setUpClass()
         # Clean up
-        frappe.db.sql("DELETE FROM `tabAccount`")
-        frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account'")
+        if frappe.db.exists("Account", "Webhook Account"):
+            frappe.delete_doc("Account", "Webhook Account", force=1, ignore_permissions=True)
+        frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account' AND `name` = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabSequence` WHERE account = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabCRM Lead Apollo ID` WHERE account = 'Webhook Account'")
         frappe.db.sql("DELETE FROM `tabCRM Lead` WHERE first_name = 'Webhook'")
