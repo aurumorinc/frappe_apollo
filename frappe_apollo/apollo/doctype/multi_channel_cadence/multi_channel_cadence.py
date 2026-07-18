@@ -22,7 +22,7 @@ def before_save(doc, method=None):
 	
 	active_mappings = [
 		row for row in cadence.apollo_ids
-		if row.sender == doc.sender and row.status == "Active"
+		if row.sender == doc.sender and row.status == "Active" and row.apollo_id
 	]
 	
 	if not active_mappings:
@@ -88,10 +88,13 @@ def _assign_contact_to_sequence(mcc_name):
 	mcc = frappe.get_doc("Multi Channel Cadence", mcc_name)
 	if not mcc.apollo_account or not mcc.apollo_sequence_id:
 		wait_for_event(
-			event_key="doc:Multi Channel Cadence:on_update",
-			condition=f"argument.get('name') == '{mcc.name}' and argument.get('apollo_account') and argument.get('apollo_sequence_id')"
+			event_key=f"doc:Cadence:on_update:{mcc.cadence}",
+			condition=f"any(row.get('sender') == '{mcc.sender}' and row.get('status') == 'Active' and row.get('apollo_id') for row in argument.get('apollo_ids', []))",
+			consider_events_since=mcc.modified
 		)
 		mcc.reload()
+		mcc.save(ignore_permissions=True)
+		return
 		
 	sender = mcc.sender
 	
