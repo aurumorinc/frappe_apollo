@@ -41,7 +41,7 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_email_account.get.return_value = [mock_acc]
         
         mock_account = MagicMock()
-        mock_account.status = "Active"
+        mock_account.status = "Authorized"
         
         def mock_get_doc_side_effect(*args, **kwargs):
             doctype = args[0] if args and isinstance(args[0], str) else (args[0].get('doctype') if args else kwargs.get('doctype'))
@@ -91,7 +91,7 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_email_account.get.return_value = [mock_acc]
         
         mock_account = MagicMock()
-        mock_account.status = "Active"
+        mock_account.status = "Authorized"
         
         mock_lead = MagicMock()
         mock_lead_acc = MagicMock()
