@@ -1,11 +1,13 @@
 import frappe
 import unittest
+from frappe.tests import IntegrationTestCase
 from frappe_apollo.integrations.apollo import ApolloClient
 from frappe_apollo.tests.integration.external.conftest import my_vcr
 
-class TestApolloExternalAPI(unittest.TestCase):
+class TestApolloExternalAPI(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
+		super().setUpClass()
 		import os
 		# Use the account provided by the user via site_config or environment variable
 		cls.account_name = frappe.conf.get("apollo_test_account") or os.environ.get("APOLLO_TEST_ACCOUNT")
@@ -14,26 +16,26 @@ class TestApolloExternalAPI(unittest.TestCase):
 		# If no real credentials are provided, use dummy ones for VCR replay
 		if not cls.account_name:
 			cls.account_name = "Dummy VCR Account"
-			if not frappe.db.exists("Account", cls.account_name):
-				frappe.get_doc({
-					"doctype": "Account",
-					"account_name": cls.account_name,
-					"api_key": "dummy_api_key_for_vcr"
-				}).insert()
-				
+			
 		if not cls.sequence_id:
 			cls.sequence_id = "6a0cdfe8da382d001cc8423e" # Default sequence ID from cassettes
-		
-		# Check if the account exists in the database (for real accounts)
-		if not frappe.db.exists("Account", cls.account_name):
-			raise unittest.SkipTest(f"Account '{cls.account_name}' not found in database. Skipping external tests.")
-			
-		cls.client = ApolloClient(cls.account_name)
 
 	@classmethod
 	def tearDownClass(cls):
 		frappe.db.rollback()
 		super().tearDownClass()
+
+	def setUp(self):
+		super().setUp()
+		if self.account_name == "Dummy VCR Account" and not frappe.db.exists("Account", self.account_name):
+			frappe.get_doc({
+				"doctype": "Account",
+				"account_name": self.account_name,
+				"api_key": "dummy_api_key_for_vcr",
+				"client_id": "dummy_client_id",
+				"client_secret": "dummy_client_secret"
+			}).insert()
+		self.client = ApolloClient(self.account_name)
 
 	def _cleanup_all_sequences(self):
 		res = self.client.search_sequences(per_page=100)
