@@ -86,7 +86,12 @@ def _provision_sequences(cadence_name, emailer_steps=None):
 				seq_id = existing_ids[(account_name, user_row.user)]
 				if emailer_steps:
 					try:
-						client.update_sequence(seq_id, {"emailer_steps": emailer_steps})
+						update_steps = []
+						for i, step in enumerate(emailer_steps):
+							step_copy = step.copy()
+							step_copy["position"] = i + 1
+							update_steps.append(step_copy)
+						client.update_sequence(seq_id, {"emailer_steps": update_steps})
 					except Exception as e:
 						frappe.log_error(f"Failed to update Apollo sequence {seq_id} for Cadence {cadence_name}", str(e))
 				continue
@@ -136,7 +141,8 @@ def _get_sequence_steps(cadence_name):
 					message_field = message_field[7:]
 
 				emailer_touches = [{
-					"type": "auto_email",
+					"type": "new_thread",
+					"status": "approved",
 					"include_signature": True,
 					"emailer_template": {
 						"subject": f"{{{{{subject_field}}}}}",
