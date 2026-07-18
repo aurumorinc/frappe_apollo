@@ -214,3 +214,38 @@ class TestApolloExternalAPI(unittest.TestCase):
 			self.client.archive_sequence(sequence_id)
 		except Exception:
 			pass
+
+	@my_vcr.use_cassette('test_apollo_refresh.yaml')
+	def test_proactive_token_refresh(self):
+		import os
+		if not frappe.conf.get("apollo_test_account") and not os.environ.get("APOLLO_TEST_ACCOUNT"):
+			if not os.path.exists(os.path.join(os.path.dirname(__file__), 'cassettes', 'test_apollo_refresh.yaml')):
+				self.skipTest("No credentials and no cassette found for this test.")
+
+		account = frappe.get_doc("Account", self.account_name)
+		original_expired = frappe.utils.add_to_date(frappe.utils.now_datetime(), days=-1)
+		account.db_set("expired", original_expired)
+		account.db_set("refresh_token", "dummy_refresh")
+		account.db_set("status", "Authorized")
+		
+		self.client.account.reload()
+		
+		from unittest.mock import patch, MagicMock
+		# Proactive refresh should trigger before making the request
+		with patch("frappe_apollo.integrations.apollo.requests.post") as mock_post:
+			mock_response = MagicMock()
+			mock_response.status_code = 200
+			mock_response.json.return_value = {
+				"access_token": "new_access",
+				"refresh_token": "new_refresh",
+				"expires_in": 3600
+			}
+			mock_post.return_value = mock_response
+
+			response = self.client.get_email_accounts()
+			mock_post.assert_called_once()
+		
+		account.reload()
+		self.assertIn("email_accounts", response)
+		self.assertGreater(account.expired, original_expired)
+		self.assertEqual(account.status, "Authorized")
