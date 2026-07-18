@@ -37,6 +37,13 @@ def callback(code, state=None):
 	
 	account.access_token = data.get("access_token")
 	account.refresh_token = data.get("refresh_token")
+	
+	expires_in = data.get("expires_in")
+	if expires_in:
+		account.expired = frappe.utils.add_to_date(frappe.utils.now_datetime(), seconds=int(expires_in))
+		
+	account.status = "Authorized"
+	
 	account.save(ignore_permissions=True)
 	frappe.db.commit()
 	
