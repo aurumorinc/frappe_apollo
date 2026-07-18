@@ -30,10 +30,10 @@ def _create_a_contact(mcc_name):
 		)
 
 	account = frappe.get_doc("Account", account_name)
-	if account.status != "Active":
+	if account.status != "Authorized":
 		wait_for_event(
 			event_key="doc:Account:on_update",
-			condition=f"argument.get('name') == '{account_name}' and argument.get('status') == 'Active'"
+			condition=f"argument.get('name') == '{account_name}' and argument.get('status') == 'Authorized'"
 		)
 
 	# Ensure the CRM Lead has an entry for this account in apollo_ids
@@ -73,8 +73,8 @@ def create_a_contact(lead_name, account_name):
 		raise SuspendJob("Apollo Cadence Provider is disabled.")
 
 	account = frappe.get_doc("Account", account_name)
-	if account.status != "Active":
-		raise SuspendJob("Apollo Account is not Active.")
+	if account.status != "Authorized":
+		raise SuspendJob("Apollo Account is not Authorized.")
 
 	lead = frappe.get_doc("CRM Lead", lead_name)
 
