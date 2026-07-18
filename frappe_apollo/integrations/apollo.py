@@ -24,18 +24,29 @@ class ApolloClient:
 			payload["q_name"] = q_name
 		return self._request("POST", "/emailer_campaigns/search", json=payload)
 		
-	def create_sequence(self, name, permissions="team_can_use", active=True):
+	def create_sequence(self, name, permissions="team_can_use", active=True, emailer_steps=None):
 		payload = {
 			"name": name,
 			"permissions": permissions,
 			"active": active
 		}
+		if emailer_steps:
+			payload["emailer_steps"] = emailer_steps
 		res = self._request("POST", "/sequences", json=payload)
 		return res.get("emailer_campaign", {}).get("id")
 		
 	def update_sequence(self, sequence_id, payload):
 		return self._request("PUT", f"/sequences/{sequence_id}", json=payload)
 		
+	def approve_sequence(self, sequence_id):
+		return self._request("POST", f"/emailer_campaigns/{sequence_id}/approve")
+
+	def abort_sequence(self, sequence_id):
+		return self._request("POST", f"/emailer_campaigns/{sequence_id}/abort")
+
+	def archive_sequence(self, sequence_id):
+		return self._request("POST", f"/emailer_campaigns/{sequence_id}/archive")
+
 	def create_contact(self, lead_data):
 		# Recommendation: run_dedupe=True
 		lead_data["run_dedupe"] = True
