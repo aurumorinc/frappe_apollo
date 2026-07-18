@@ -6,18 +6,12 @@ from frappe.exceptions import AuthenticationError
 
 class TestWebhookIntegration(IntegrationTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        # Clean up
-        if frappe.db.exists("Account", "Webhook Account"):
-            frappe.delete_doc("Account", "Webhook Account", force=1, ignore_permissions=True)
-        frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account' AND `name` = 'Webhook Account'")
-        frappe.db.sql("DELETE FROM `tabSequence` WHERE account = 'Webhook Account'")
-        frappe.db.sql("DELETE FROM `tabCRM Lead Apollo ID` WHERE account = 'Webhook Account'")
-        frappe.db.sql("DELETE FROM `tabCRM Lead` WHERE first_name = 'Webhook'")
-        frappe.db.sql("DELETE FROM `tabMulti Channel Cadence` WHERE cadence_name = 'Webhook Cadence'")
-        frappe.db.sql("DELETE FROM `tabCadence` WHERE name = 'Webhook Cadence'")
-        frappe.db.sql("DELETE FROM `tabCommunication` WHERE subject = 'Test'")
+    def tearDownClass(cls):
+        frappe.db.rollback()
+        super().tearDownClass()
+
+    def setUp(self):
+        super().setUp()
 
         # Create base records
         frappe.get_doc({
@@ -52,14 +46,13 @@ class TestWebhookIntegration(IntegrationTestCase):
             "start_date": "2024-01-01"
         }).insert(ignore_permissions=True, ignore_links=True)
         
-        cls.lead_name = lead.name
-        cls.mcc_name = mcc.name
-        cls.cadence_name = cadence.name
+        self.lead_name = lead.name
+        self.mcc_name = mcc.name
+        self.cadence_name = cadence.name
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         frappe.db.rollback()
-        super().tearDownClass()
+        super().tearDown()
 
     @patch("frappe.get_request_header")
     def test_security_unauthorized_no_token(self, mock_header):

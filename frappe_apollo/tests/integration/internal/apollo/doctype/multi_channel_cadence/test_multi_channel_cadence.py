@@ -19,7 +19,8 @@ class TestMCCIntegration(IntegrationTestCase):
     @patch("frappe.db.get_value")
     @patch("frappe.get_doc")
     @patch("frappe.get_all")
-    def test_sequence_inactive_raises_wait(self, mock_get_all, mock_get_doc, mock_get_value, mock_wait):
+    @patch("frappe_apollo.integrations.apollo.ApolloClient")
+    def test_sequence_inactive_raises_wait(self, mock_client_class, mock_get_all, mock_get_doc, mock_get_value, mock_wait):
         # Setup mocks
         def mock_get_value_side_effect(dt, name_or_filters=None, fieldname=None):
             if dt == "Cadence Provider": return 1
@@ -28,9 +29,11 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_get_value.side_effect = mock_get_value_side_effect
         
         mock_mcc = MagicMock()
+        mock_mcc.name = "mcc1"
         mock_mcc.sender = "user1"
         mock_mcc.recipient = "lead1"
         mock_mcc.cadence = "cad1"
+        mock_mcc.status = "Scheduled"
         mock_mcc.apollo_account = None
         
         mock_email_account = MagicMock()
@@ -77,9 +80,11 @@ class TestMCCIntegration(IntegrationTestCase):
         mock_get_value.side_effect = mock_get_value_side_effect
         
         mock_mcc = MagicMock()
+        mock_mcc.name = "mcc1"
         mock_mcc.sender = "user1"
         mock_mcc.recipient = "lead1"
         mock_mcc.cadence_name = "cad1"
+        mock_mcc.status = "Scheduled"
         mock_mcc.apollo_account = "acc1"
         mock_mcc.apollo_sequence_id = "seq1"
         

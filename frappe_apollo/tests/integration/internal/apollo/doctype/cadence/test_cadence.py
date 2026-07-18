@@ -95,6 +95,10 @@ class TestApolloLifecycleE2E(IntegrationTestCase):
         frappe.db.set_value("Account", "TestAccount1", "status", "Unauthorized")
         frappe.db.set_value("Account", "TestAccount2", "status", "Authorized")
 
+    def tearDown(self):
+        frappe.db.rollback()
+        super().tearDown()
+
     def _create_test_cadence(self):
         cadence = frappe.get_doc({
             "doctype": "Cadence",
@@ -284,7 +288,6 @@ class TestApolloLifecycleE2E(IntegrationTestCase):
                             {"parent": lead.name, "account": "TestAccount1"},
                             "apollo_id",
                             "")
-        frappe.db.commit() # make sure
         
         mock_mcc_wait.side_effect = SuspendJob("wait")
         with self.assertRaises(SuspendJob):
@@ -295,7 +298,6 @@ class TestApolloLifecycleE2E(IntegrationTestCase):
                             {"parent": lead.name, "account": "TestAccount1"},
                             "apollo_id",
                             "apollo_contact_1")
-        frappe.db.commit()
         
         mock_mcc_wait.side_effect = None
         mock_client = mock_client_cls.return_value
