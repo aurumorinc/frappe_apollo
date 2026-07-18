@@ -1,7 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "Test External Sequence VCR", "permissions": "team_can_use", "active":
-      true}'
+    body: '{"page": 1, "per_page": 100}'
     headers:
       Accept:
       - '*/*'
@@ -12,20 +11,21 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '85'
+      - '28'
       Content-Type:
       - application/json
       User-Agent:
       - python-requests/2.34.2
     method: POST
-    uri: https://api.apollo.io/api/v1/sequences
+    uri: https://api.apollo.io/api/v1/emailer_campaigns/search
   response:
     body:
-      string: '{"emailer_campaign":{"id":"6a5acd3be2dbb60020466943","name":"Test External
-        Sequence VCR","description":null,"archived":false,"created_at":"2026-07-18T00:47:55.052Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":true,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":null,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":0,"emailer_steps":[],"unique_scheduled":"loading","unique_delivered":"loading","unique_bounced":"loading","unique_opened":"loading","unique_hard_bounced":"loading","unique_spam_blocked":"loading","unique_replied":"loading","unique_demoed":"loading","unique_clicked":"loading","unique_unsubscribed":"loading","unique_opened_unfiltered":"loading","unique_clicked_unfiltered":"loading","unique_delivered_open_tracked":"loading","unique_delivered_click_tracked":"loading","bounce_rate":"loading","hard_bounce_rate":"loading","open_rate":"loading","open_rate_tracked":"loading","open_rate_unfiltered":"loading","open_rate_unfiltered_tracked":"loading","click_rate":"loading","click_rate_tracked":"loading","click_rate_unfiltered":"loading","click_rate_unfiltered_tracked":"loading","reply_rate":"loading","spam_block_rate":"loading","opt_out_rate":"loading","demo_rate":"loading","loaded_stats":true,"contact_statuses":{"active":"loading","failed":0,"paused":"loading","finished":"loading","bounced":"loading","hard_bounced":"loading","spam_blocked":"loading","not_sent":"loading"},"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5acd3be2dbb60020466943","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]},"auto_pause_enabled":false,"auto_pause_config":{"evaluation_window_days":7,"min_volume":200,"warning_threshold_pct":5.0,"auto_pause_threshold_pct":10.0}},"sharing_accesses":[],"emailer_steps":[],"emailer_touches":[],"emailer_templates":[],"attachments":[],"team":{"id":"69d3cbed7bc8d500194ecfff","sequences_finder_empty":false}}'
+      string: '{"pagination":{"page":1,"per_page":100,"total_entries":2,"total_pages":1},"breadcrumbs":[],"emailer_campaigns":[{"id":"6a5ae77f77552d00147f7258","name":"Test
+        External Sequence Update VCR","description":null,"archived":false,"created_at":"2026-07-18T02:39:59.434Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":true,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":0,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":1,"emailer_steps":[{"id":"6a5ae94f12bcd6000ca566b1","position":1,"wait_time":1,"wait_mode":"day","type":"auto_email"}],"unique_scheduled":0,"unique_delivered":0,"unique_bounced":0,"unique_opened":0,"unique_hard_bounced":0,"unique_spam_blocked":0,"unique_replied":0,"unique_demoed":0,"unique_clicked":0,"unique_unsubscribed":0,"unique_opened_unfiltered":0,"unique_clicked_unfiltered":0,"unique_delivered_open_tracked":0,"unique_delivered_click_tracked":0,"bounce_rate":0.0,"hard_bounce_rate":0.0,"open_rate":0.0,"open_rate_tracked":0.0,"open_rate_unfiltered":0.0,"open_rate_unfiltered_tracked":0.0,"click_rate":0.0,"click_rate_tracked":0.0,"click_rate_unfiltered":0.0,"click_rate_unfiltered_tracked":0.0,"reply_rate":0.0,"spam_block_rate":0.0,"opt_out_rate":0.0,"demo_rate":0.0,"loaded_stats":true,"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5ae77f77552d00147f7258","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]}},{"id":"6a5ae6f5a5c11900104d979a","name":"Test
+        VCR Provisioning Cadence - Administrator","description":null,"archived":false,"created_at":"2026-07-18T02:37:41.159Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":true,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":0,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":1,"emailer_steps":[{"id":"6a5ae6f5a5c11900104d979b","position":1,"wait_time":1,"wait_mode":"day","type":"auto_email"}],"unique_scheduled":0,"unique_delivered":0,"unique_bounced":0,"unique_opened":0,"unique_hard_bounced":0,"unique_spam_blocked":0,"unique_replied":0,"unique_demoed":0,"unique_clicked":0,"unique_unsubscribed":0,"unique_opened_unfiltered":0,"unique_clicked_unfiltered":0,"unique_delivered_open_tracked":0,"unique_delivered_click_tracked":0,"bounce_rate":0.0,"hard_bounce_rate":0.0,"open_rate":0.0,"open_rate_tracked":0.0,"open_rate_unfiltered":0.0,"open_rate_unfiltered_tracked":0.0,"click_rate":0.0,"click_rate_tracked":0.0,"click_rate_unfiltered":0.0,"click_rate_unfiltered_tracked":0.0,"reply_rate":0.0,"spam_block_rate":0.0,"opt_out_rate":0.0,"demo_rate":0.0,"loaded_stats":true,"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5ae6f5a5c11900104d979a","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]}}],"num_fetch_result":null}'
     headers:
       CF-RAY:
-      - a1cd7a4b9c8195ae-BOM
+      - a1ce3c9e192e3ada-BOM
       Cache-Control:
       - max-age=0, private, must-revalidate
       Connection:
@@ -35,17 +35,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 18 Jul 2026 00:47:56 GMT
+      - Sat, 18 Jul 2026 03:00:34 GMT
       Server:
       - cloudflare
       Set-Cookie:
-      - X-CSRF-TOKEN=CRGKqu48hNOUpB8gK2PR51GKkrkpgirF6mg2MQdW5-cvrfpSa-L95LCZaF4Kniwd8c4kOeqPkV8VZHKmMUES-g;
+      - X-CSRF-TOKEN=DM5TOG8I6akl5iO6xef4mJgYY3ttQa7OLh4qfSQUfio5rV4xqPM1d98HbPKcXTycDETZoCqJNv7gDCKe4rwDKA;
         path=/; secure; SameSite=Lax
-      - _leadgenie_session=BVGgt0OO%2FK%2Bi8Z8lItlqdFgEmJtl9lzs2Ot68J5A86eH5Aw5hMlK4EELTzrvBTJ%2FAsT%2Bvfumdw7iDSOLljo%2FxousKGajB7fv080yp37Ur6pZqfbySLliykJq%2BDtyaQVP%2FRqc8HemfkxItH%2Fn4X3UqeeC2iXk6PKVq1o1erqNTsevWiZG2HiNrXbX65do%2BqPy32Dj0qpl7sPuGxtpupQRIA3L9IXSvqvL2y%2FI8pyquh0x5OffG7x8aRdTOAGGOwHGgvafBHSJ36zKLTB6I4N2ibCYS0Haht17VkQ%3D--J%2BCeuwcnn5SVtmoA--hTXAUF6YpcqdMpR6SnXHyw%3D%3D;
+      - _leadgenie_session=03U51NAZ%2FzFcmeQmCeONQiko4MbTCvsv5LfWIYi8znUVEh%2FLKUJ8woTFDxvDCNnsJcdTAU%2BlaLJjRIU9E2%2FHoEf6%2FrI2CLKSgzIJYkN5Op1N5IQqAJwPJw465l%2B2gFOCKWx24hiPScEso33VxMm3R%2BxrENKuyMqyhIsw0swJY2zZzQzZyUQIlt1UBtORHqVbwPTrjyOAOs7IEHatwvqS4NR8gQNCnUKaF9Mn30ySR1X41ZzMtkE2hYr1m%2B3dO6Sr6hoBCMxYxhVywMYijYvIJqm3CNiRv9ihTY0%3D--BlO9YCaPvQrAjx58--YUMS1ZN2VGbeW3kbpGetDg%3D%3D;
         path=/; secure; HttpOnly; SameSite=None
-      - __cf_bm=EMjGv.B95os6rm6TA3EkRQJZRWQkBToA2g_ugQr7exI-1784335674.1717417-1.0.1.1-rnCWaxwCOTU1u0ZOSP94h8pmBmt8RjCftaIu.FfJqtgBw1cwHCFudJ_Gl2hcUz51Ysg3pPojT1JCFJRek0qWplZ8wmiw0EsutizkbGDMCt2T8s09SfrqxEzYGCGu30Qu;
+      - __cf_bm=VQQ38ky_7aVkjBTsKEY6rcGi75kt94Vea3d0IJFdtYs-1784343633.620213-1.0.1.1-xJak8Z.n1frUyUiBS15rch0ce5WT_Maz7SFMowbkI9gSjRRtfeJwFN60ON3WYRb1UBYoIBYyLcisJxzWjouYi3awfDibOyE3iSfXFg0xkc7HVmtujQB5tCNIopJpAdCL;
         HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
-        Jul 2026 01:17:56 GMT
+        Jul 2026 03:30:34 GMT
       Transfer-Encoding:
       - chunked
       cf-cache-status:
@@ -53,27 +53,27 @@ interactions:
       content-security-policy:
       - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
         chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
-        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=2ab760d8c6892a5909d4a1e9ccbf31af457a7be2
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
       etag:
-      - W/"6b1ff8e6366e28fcc47522ce174c8aa6"
+      - W/"371c3fdf561c87a231c499163c546bb1"
       strict-transport-security:
       - max-age=31536000
       vary:
       - Origin
       x-24-hour-requests-left:
-      - '599'
+      - '588'
       x-24-hour-usage:
-      - '1'
+      - '12'
       x-content-type-options:
       - nosniff
       x-frame-options:
       - ALLOWALL
       x-hourly-requests-left:
-      - '199'
+      - '198'
       x-hourly-usage:
-      - '1'
+      - '2'
       x-http-request-id:
-      - '2336828400185915217'
+      - '583919635421815375'
       x-minute-requests-left:
       - '49'
       x-minute-usage:
@@ -85,11 +85,550 @@ interactions:
       x-rate-limit-minute:
       - '50'
       x-request-id:
-      - 4e8d475d-2c15-4c4b-a40a-6a3716b1f425
+      - 455c1b2f-a33b-4436-96bf-c26f1dc7fa09
       x-runtime:
-      - '1.654171'
+      - '0.095612'
       x-transaction-id:
-      - e2f74113-d401-4448-87c0-dd4dea574e19
+      - 69960329-93b7-4f79-9ca4-6171d4c1bf57
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+    method: POST
+    uri: https://api.apollo.io/api/v1/emailer_campaigns/6a5ae77f77552d00147f7258/archive
+  response:
+    body:
+      string: '{"emailer_campaign":{"id":"6a5ae77f77552d00147f7258","name":"Test External
+        Sequence Update VCR","description":null,"archived":true,"created_at":"2026-07-18T02:39:59.434Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":false,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":0,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":1,"emailer_steps":[{"id":"6a5ae94f12bcd6000ca566b1","position":1,"wait_time":1,"wait_mode":"day","type":"auto_email"}],"unique_scheduled":0,"unique_delivered":0,"unique_bounced":0,"unique_opened":0,"unique_hard_bounced":0,"unique_spam_blocked":0,"unique_replied":0,"unique_demoed":0,"unique_clicked":0,"unique_unsubscribed":0,"unique_opened_unfiltered":0,"unique_clicked_unfiltered":0,"unique_delivered_open_tracked":0,"unique_delivered_click_tracked":0,"bounce_rate":0.0,"hard_bounce_rate":0.0,"open_rate":0.0,"open_rate_tracked":0.0,"open_rate_unfiltered":0.0,"open_rate_unfiltered_tracked":0.0,"click_rate":0.0,"click_rate_tracked":0.0,"click_rate_unfiltered":0.0,"click_rate_unfiltered_tracked":0.0,"reply_rate":0.0,"spam_block_rate":0.0,"opt_out_rate":0.0,"demo_rate":0.0,"loaded_stats":true,"contact_statuses":{"active":0,"failed":0,"paused":0,"finished":0,"bounced":0,"hard_bounced":0,"spam_blocked":0,"not_sent":0},"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5ae77f77552d00147f7258","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]},"deleted":true}}'
+    headers:
+      CF-RAY:
+      - a1ce3ca0add13a4c-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 03:00:34 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=Wp94YzYfsvz_erGES3Udgx-y4VXrbKwDT10HdoayWcu3dviyG2OVWjcERAsbNUV8EWErAe4n5SNG3ehmq4qkIw;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=s%2FE%2BCR8Tj0XKK4zWTkGi025oUEQY5Q6QmhMTEJxCdujhJxQipVa4RSLq4ZHcS55DaWk1cKsBG8DD35KwoKdKRplDEDNBtoaSquNWgNFZwm%2Bj%2Fov20tWOvjqb5EwK8NZ1mQiwjYUKfTngYZ9EocENl1lbqPgpK0Mol2OADoRz%2B3dPw%2FJHly0RkJILh5VqMLMwH3%2FB5lH27vUV3DyY7p2ao7x1ecuWHfS%2BznpmSSbQKlmAEunH69n6gLoyWBLQC%2BvAEhNozEgjEYB8%2Bs1XfapnWcfBCn5pWpdMMJ0%3D--dOLQE7qcnPSjWkuf--G9wELiQw5biQywBukf5igg%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=eGkvHq._6pwn4H1mEo0uqK7k5K0Lunq.b1VWxobMa4Y-1784343634.0306423-1.0.1.1-cDshMb_RHuR2lfcShWxfizb6nJH8bKoM9AAIogl5cWTVE.NERbs.eqAu5xDVm7XbCBw_B.i0ILJBtfdOc2wnyZIC0NrbXvn7U2TidyVzN7xWmqLg56trRsrcC4pJ2ILX;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
+        Jul 2026 03:30:34 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
+      etag:
+      - W/"d476716c4634a7d15f33bebe68f3f827"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '583'
+      x-24-hour-usage:
+      - '17'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '199'
+      x-hourly-usage:
+      - '1'
+      x-http-request-id:
+      - '6905770201624617110'
+      x-minute-requests-left:
+      - '49'
+      x-minute-usage:
+      - '1'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - 15398bb7-da5c-4436-9b50-7e78d132dc42
+      x-runtime:
+      - '0.603104'
+      x-transaction-id:
+      - 66f18af4-bc72-4613-8daf-ea1f46269d26
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+    method: POST
+    uri: https://api.apollo.io/api/v1/emailer_campaigns/6a5ae6f5a5c11900104d979a/archive
+  response:
+    body:
+      string: '{"emailer_campaign":{"id":"6a5ae6f5a5c11900104d979a","name":"Test VCR
+        Provisioning Cadence - Administrator","description":null,"archived":true,"created_at":"2026-07-18T02:37:41.159Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":false,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":0,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":1,"emailer_steps":[{"id":"6a5ae6f5a5c11900104d979b","position":1,"wait_time":1,"wait_mode":"day","type":"auto_email"}],"unique_scheduled":0,"unique_delivered":0,"unique_bounced":0,"unique_opened":0,"unique_hard_bounced":0,"unique_spam_blocked":0,"unique_replied":0,"unique_demoed":0,"unique_clicked":0,"unique_unsubscribed":0,"unique_opened_unfiltered":0,"unique_clicked_unfiltered":0,"unique_delivered_open_tracked":0,"unique_delivered_click_tracked":0,"bounce_rate":0.0,"hard_bounce_rate":0.0,"open_rate":0.0,"open_rate_tracked":0.0,"open_rate_unfiltered":0.0,"open_rate_unfiltered_tracked":0.0,"click_rate":0.0,"click_rate_tracked":0.0,"click_rate_unfiltered":0.0,"click_rate_unfiltered_tracked":0.0,"reply_rate":0.0,"spam_block_rate":0.0,"opt_out_rate":0.0,"demo_rate":0.0,"loaded_stats":true,"contact_statuses":{"active":0,"failed":0,"paused":0,"finished":0,"bounced":0,"hard_bounced":0,"spam_blocked":0,"not_sent":0},"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5ae6f5a5c11900104d979a","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]},"deleted":true}}'
+    headers:
+      CF-RAY:
+      - a1ce3ca66f014010-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 03:00:35 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=OyPCVhdw89QHML1kEh09lwgSSQPykpWSzl1mu15Pa81cG6DCuZp5hSvg9ElIzqfOWI2EwjUfMC8umYNZiwAmfA;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=Krh3lXyMKqG2hM7i0%2BhB7P2mvXtiU8RKkDPSnz1pWdFsKcXrFMYF5LLY5sk9%2FsVQO4LkUCXMCN7myeYPTXg1V4p3sfrBi7pyuN0Nu5FmzvVZYkLgRYOkhayIF%2BNuwXmmUd7He1tJmFchbfNqbTO9C6jRHxKRQ8UrtSkwZ2Vy5cGMJkQyCyrkHGY5ssF%2B0V5q3m8KB8idPj8FnpHFA2q0k14agwrqv%2B4P%2FyBSgGy3XSiukvaMjuRmcXMen5%2B%2FTHERRs0OQjSPQVXte7V%2BLstn88Ypu%2BFgWLo9Yng%3D--fRm0DG31e1OG%2BQHG--zybjjq8quDiDwUXpNNtRFQ%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=SRIwM4nIzmf_syJ_xbAOPVmk9gxBO8wMB3bntbhNp78-1784343634.9468358-1.0.1.1-YsWvQDBeorPXXhKzXU.dOhLppt3VHYB9T54fZqWSf4Deh5yl_EogEwbgKsR1sCAFKof3igT4vZ.akqjjAVCaNeKE_O.DBnsQRoTX7s7nwplYlJ6SLCvZkDiSYbilcXx8;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
+        Jul 2026 03:30:35 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
+      etag:
+      - W/"921c6895c614ac9bd7c931fae82d9385"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '582'
+      x-24-hour-usage:
+      - '18'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '198'
+      x-hourly-usage:
+      - '2'
+      x-http-request-id:
+      - '-5263198514274422139'
+      x-minute-requests-left:
+      - '48'
+      x-minute-usage:
+      - '2'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - f8028e70-7d1c-44e1-99e5-3c479fbe3b01
+      x-runtime:
+      - '0.117808'
+      x-transaction-id:
+      - e49a0858-47e1-4643-a6c0-82b2647c17d1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"label": "subject", "type": "string", "modality": "contact"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+    method: POST
+    uri: https://api.apollo.io/api/v1/fields
+  response:
+    body:
+      string: '{"error":"subject already exists"}'
+    headers:
+      CF-RAY:
+      - a1ce3cacadc13d3f-BOM
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '34'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 03:00:36 GMT
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
+      set-cookie:
+      - __cf_bm=gwsLMg8I55u05eCpYlOekKx.UjyEOdUHXf2fkYPS5z0-1784343635.9454534-1.0.1.1-7yBEIOZr4FM0AjCH30qazi1UJHk5ula67L0V_SNgBBaOHxA1j8gvzjmpIp86HcArHKF1.X7UfdhV9ZtGD3q.4V_1cwofJOF1lgJZXQO2fkZHfEZTWhLakMjSo7e3WzRl;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
+        Jul 2026 03:30:36 GMT
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '579'
+      x-24-hour-usage:
+      - '21'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '179'
+      x-hourly-usage:
+      - '21'
+      x-http-request-id:
+      - '8260027049176064555'
+      x-minute-requests-left:
+      - '49'
+      x-minute-usage:
+      - '1'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - 3bf466fd-bee0-4c83-8ae5-d7b84f248c46
+      x-runtime:
+      - '0.039648'
+    status:
+      code: 422
+      message: Unprocessable Entity
+- request:
+    body: '{"label": "message", "type": "string", "modality": "contact"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+    method: POST
+    uri: https://api.apollo.io/api/v1/fields
+  response:
+    body:
+      string: '{"error":"message already exists"}'
+    headers:
+      CF-RAY:
+      - a1ce3cb2dbd50e6e-BOM
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '34'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 03:00:37 GMT
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
+      set-cookie:
+      - __cf_bm=l8e825VRXzzEGswd_Eg6NPgWR3Y9o6xZM4ZTjAlMmPs-1784343636.9360707-1.0.1.1-5Q.Jwb7kZX148ea7TeQgn9MONNNJQAap26RRg95TjQ01Y4dKgK8naz98bD.Baew1Bk2a1.ub1NkN0YZLnzdbbOCd5GGy9rL9g0N.vnjWfYlBiuGXxTep.zD1MtcjBniK;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
+        Jul 2026 03:30:37 GMT
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '578'
+      x-24-hour-usage:
+      - '22'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '178'
+      x-hourly-usage:
+      - '22'
+      x-http-request-id:
+      - '-9118882844791203459'
+      x-minute-requests-left:
+      - '48'
+      x-minute-usage:
+      - '2'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - 0f8ba709-89c7-4cc1-a3d9-06f8134732c0
+      x-runtime:
+      - '0.034894'
+    status:
+      code: 422
+      message: Unprocessable Entity
+- request:
+    body: '{"name": "Test External Sequence VCR", "permissions": "team_can_use", "active":
+      true, "emailer_steps": [{"type": "auto_email", "wait_time": 1, "wait_mode":
+      "day", "emailer_touches": [{"type": "new_thread", "status": "approved", "include_signature":
+      true, "emailer_template": {"subject": "{{subject}}", "body_html": "{{message}}"}}]}]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '334'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+    method: POST
+    uri: https://api.apollo.io/api/v1/sequences
+  response:
+    body:
+      string: '{"emailer_campaign":{"id":"6a5aec55541db2001c600f58","name":"Test External
+        Sequence VCR","description":null,"archived":false,"created_at":"2026-07-18T03:00:37.540Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":true,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":null,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":1,"emailer_steps":[{"id":"6a5aec55541db2001c600f59","position":1,"wait_time":1,"wait_mode":"day","type":"auto_email"}],"unique_scheduled":"loading","unique_delivered":"loading","unique_bounced":"loading","unique_opened":"loading","unique_hard_bounced":"loading","unique_spam_blocked":"loading","unique_replied":"loading","unique_demoed":"loading","unique_clicked":"loading","unique_unsubscribed":"loading","unique_opened_unfiltered":"loading","unique_clicked_unfiltered":"loading","unique_delivered_open_tracked":"loading","unique_delivered_click_tracked":"loading","bounce_rate":"loading","hard_bounce_rate":"loading","open_rate":"loading","open_rate_tracked":"loading","open_rate_unfiltered":"loading","open_rate_unfiltered_tracked":"loading","click_rate":"loading","click_rate_tracked":"loading","click_rate_unfiltered":"loading","click_rate_unfiltered_tracked":"loading","reply_rate":"loading","spam_block_rate":"loading","opt_out_rate":"loading","demo_rate":"loading","loaded_stats":true,"contact_statuses":{"active":"loading","failed":0,"paused":"loading","finished":"loading","bounced":"loading","hard_bounced":"loading","spam_blocked":"loading","not_sent":"loading"},"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5aec55541db2001c600f58","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]},"auto_pause_enabled":false,"auto_pause_config":{"evaluation_window_days":7,"min_volume":200,"warning_threshold_pct":5.0,"auto_pause_threshold_pct":10.0}},"sharing_accesses":[],"emailer_steps":[{"id":"6a5aec55541db2001c600f59","emailer_campaign_id":"6a5aec55541db2001c600f58","position":1,"wait_time":1,"type":"auto_email","wait_mode":"day","note":null,"max_emails_per_day":null,"exact_datetime":null,"priority":null,"auto_skip_in_x_days":null,"counts":{"active":0,"paused":0,"finished":0,"bounced":0,"spam_blocked":0,"hard_bounced":0,"not_sent":0},"ab_test_details":{}}],"emailer_touches":[{"id":"6a5aec55541db2001c600f5a","emailer_step_id":"6a5aec55541db2001c600f59","emailer_template_id":"6a5aec55541db2001c600f5b","status":"approved","type":"new_thread","include_signature":true,"has_personalized_opener":null,"personalized_opener_fallback_option":"send_without_opener","generic_personalized_opener":null,"template_type":null,"generation_options":[],"generation_tone":{},"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"composition_mode":null,"project_workspace_id":null,"unique_scheduled":"loading","unique_delivered":"loading","unique_delivered_open_tracked":"loading","unique_delivered_click_tracked":"loading","unique_bounced":"loading","unique_hard_bounced":"loading","unique_spam_blocked":"loading","unique_opened":"loading","unique_opened_unfiltered":"loading","unique_clicked":"loading","unique_clicked_unfiltered":"loading","unique_replied":"loading","unique_demoed":"loading","unique_unsubscribed":"loading","bounce_rate":"loading","hard_bounce_rate":"loading","spam_block_rate":"loading","open_rate":"loading","open_rate_unfiltered":"loading","open_rate_tracked":"loading","open_rate_unfiltered_tracked":"loading","click_rate":"loading","click_rate_unfiltered":"loading","click_rate_tracked":"loading","click_rate_unfiltered_tracked":"loading","reply_rate":"loading","demo_rate":"loading","opt_out_rate":"loading"}],"emailer_templates":[{"id":"6a5aec55541db2001c600f5b","name":null,"user_id":"69d3cbed7bc8d500194ed14c","starred_by_user_ids":[],"subject":"{{subject}}","archived":false,"created_at":"2026-07-18T03:00:37.556Z","global":false,"body_text":"{{message}}","folder_id":null,"body_html":"\u003chtml\u003e\u003chead\u003e\u003c/head\u003e\u003cbody\u003e{{message}}\u003c/body\u003e\u003c/html\u003e","creation_type":"manual","prompt_template_id":null,"description":null,"highlights":null,"has_ai_variables":false,"template_type":null,"category":null,"builder_json":null,"label_ids":[],"prompt_id":null}],"attachments":[],"team":{"id":"69d3cbed7bc8d500194ecfff","sequences_finder_empty":false}}'
+    headers:
+      CF-RAY:
+      - a1ce3cb538555717-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 03:00:38 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=44FEJrLXhmgfk1dtIQIeZiTOFPFLJWRS_YzoCDY23Vnb14I7ITT2utzgVE4Wp4dtJYOcWiwNcJMnj3tfBcREjQ;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=TLwM9UlPOjp3NouXMgp9yePrwBnDDg0b3NJc9E3vswId6x3fs2wT6y5R8IBXoVp66lB7o93YqOkas8PF8vi%2FHqytahvcdhvceVlcFe1cvB9yX4sUNcKO00NRLSmxHDe6wDhN0cWARoJNPDoqbLOZMnxohuw4AtocpQ7hkSuGj7Y37nFmWAfbXxnR0UwLjJzzZgHQInjINt1UQFHituechP787vTUkms9d%2Fzbb%2BNJ5rAdR5dP6lkVognz1dMS6uqiXolI6uAgHalsX%2Be6nbfqPtsi7OhEAmtqdvo%3D--Kv5%2F5DvucD%2BMYDWP--9p9kbVZosuYatLRS9sxf4Q%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=rxvjIRb5MsJ4_rAHphFHsALni6y.CrwQ3peZ8klf2zY-1784343637.3186789-1.0.1.1-x9VVFHlP1SvQQyE0P8VaPynmsMg2rH00RlPynMD_C3zH5BikiMK1ca8egq1KcUKQwPwUZTWX0KQLvLXRtaOipqN9d4Z.0pEoqo7WHBRLJQEvxJaZD8NELgGm2EbzE9t.;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
+        Jul 2026 03:30:38 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
+      etag:
+      - W/"2f430119e6b4ffd9aeb672eded6d949d"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '577'
+      x-24-hour-usage:
+      - '23'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '197'
+      x-hourly-usage:
+      - '3'
+      x-http-request-id:
+      - '-312588697703021228'
+      x-minute-requests-left:
+      - '49'
+      x-minute-usage:
+      - '1'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - 3da19320-6079-4d57-a4de-c50e925a98a7
+      x-runtime:
+      - '0.602957'
+      x-transaction-id:
+      - 50aaa60f-ac8d-4726-9b76-8eed4213963d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+    method: POST
+    uri: https://api.apollo.io/api/v1/emailer_campaigns/6a5aec55541db2001c600f58/archive
+  response:
+    body:
+      string: '{"emailer_campaign":{"id":"6a5aec55541db2001c600f58","name":"Test External
+        Sequence VCR","description":null,"archived":true,"created_at":"2026-07-18T03:00:37.540Z","emailer_schedule_id":null,"max_emails_per_day":null,"user_id":"69d3cbed7bc8d500194ed14c","same_account_reply_policy_cd":null,"excluded_account_stage_ids":[],"excluded_contact_stage_ids":[],"contact_email_event_to_stage_mapping":{},"label_ids":[],"create_task_if_email_open":false,"email_open_trigger_task_threshold":3,"mark_finished_if_click":false,"active":false,"days_to_wait_before_mark_as_response":5,"starred_by_user_ids":[],"mark_finished_if_reply":true,"mark_finished_if_interested":true,"mark_paused_if_ooo":true,"mark_finished_if_phone_call_connected":null,"sequence_by_exact_daytime":null,"last_used_at":null,"sequence_ruleset_id":null,"ignore_apollo_global_email_bounce_list":null,"folder_id":null,"same_account_reply_delay_days":30,"is_performing_poorly":false,"num_contacts_email_status_extrapolated":0,"remind_ab_test_results":false,"ab_test_step_ids":[],"prioritized_by_user":null,"creation_type":"new","object_owner_id":"69d3cbed7bc8d500194ed14c","dmp_ids":null,"content_center_type":"new_cc","product_profile_ids":[],"context_card_ids":[],"status_reason":"manual_approve","auto_pause_warning_level":null,"auto_paused_at":null,"auto_pause_bounce_rate":null,"allowed_send_from_domains":[],"num_steps":1,"emailer_steps":[{"id":"6a5aec55541db2001c600f59","position":1,"wait_time":1,"wait_mode":"day","type":"auto_email"}],"unique_scheduled":0,"unique_delivered":0,"unique_bounced":0,"unique_opened":0,"unique_hard_bounced":0,"unique_spam_blocked":0,"unique_replied":0,"unique_demoed":0,"unique_clicked":0,"unique_unsubscribed":0,"unique_opened_unfiltered":0,"unique_clicked_unfiltered":0,"unique_delivered_open_tracked":0,"unique_delivered_click_tracked":0,"bounce_rate":0.0,"hard_bounce_rate":0.0,"open_rate":0.0,"open_rate_tracked":0.0,"open_rate_unfiltered":0.0,"open_rate_unfiltered_tracked":0.0,"click_rate":0.0,"click_rate_tracked":0.0,"click_rate_unfiltered":0.0,"click_rate_unfiltered_tracked":0.0,"reply_rate":0.0,"spam_block_rate":0.0,"opt_out_rate":0.0,"demo_rate":0.0,"loaded_stats":true,"contact_statuses":{"active":0,"failed":0,"paused":0,"finished":0,"bounced":0,"hard_bounced":0,"spam_blocked":0,"not_sent":0},"cc_emails":"","bcc_emails":"","underperforming_touches_count":0,"sharing_permission":{"visibility":"restricted","access_type":null,"object_type":"EmailerCampaign","object_id":"6a5aec55541db2001c600f58","is_owner":true,"owner_id":"69d3cbed7bc8d500194ed14c","sharing_accesses":[]},"deleted":true}}'
+    headers:
+      CF-RAY:
+      - a1ce3cbad845e0aa-BOM
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 03:00:39 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - X-CSRF-TOKEN=HKy_bA5qqxmfP88ul1KFkQvxkfQ0E7n-w4JVtGYVLATB9VhAHBngNEVh2Wk6oqQvhqL4ick0foONt49hkTf_VA;
+        path=/; secure; SameSite=Lax
+      - _leadgenie_session=IBZXyHCAl4T0PdhUcRNJ0QDTPf3MvRhgKqacN71ESoCtLHAlay5%2BIMFeGGzCR1UoQy3eIBJ8SbZMPpmar9Rd5aJlKDdwmDrUzO2J315rmWabE2Ub8zCh1pXxpVRZ2N5Ae%2F8Z0kvqD%2FLDijmCom%2FFJxnEvcKBSVdubpB2RrhpY4LylD1%2FINEN2xm8qRz9rYPVb1Nt0s6vBqtDy7TSs43PPz2y8b2tQeoiqXoq6QPqxegoE8xRrOeOtc%2F1OR%2BCyObwNYMT23vep9HXe0XPU0FJVy7KTyLogKSzSu0%3D--%2BKy1P5ldjYyUiHA5--dtURIA7s3m9EaTzOTngKlA%3D%3D;
+        path=/; secure; HttpOnly; SameSite=None
+      - __cf_bm=OAy_e68Ac0SyfP4d4UT_FTYcRR0E8a377bhRtyKijgY-1784343638.213234-1.0.1.1-nxj9LMb4qT6WYeBzBJVkjimkMGejGj0X5dI.308ULA6VNr30U6yGXd.iaRLmevUTKlsdmWm1_AbyqK8h9dd0vAiG9N9iveG_baq2xkcnddu36QNFEj9dMmqKyORpLKDx;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=apollo.io; Expires=Sat, 18
+        Jul 2026 03:30:39 GMT
+      Transfer-Encoding:
+      - chunked
+      cf-cache-status:
+      - DYNAMIC
+      content-security-policy:
+      - frame-ancestors 'self' chrome-extension://alhgpfoeiimagjlnfekdhkjlkiomcapa
+        chrome-extension://ececkagaccnfmkopaiemklekhoimmgpn *.salesforce.com *.lightning.force.com;
+        report-uri https://o101058.ingest.us.sentry.io/api/222018/security/?sentry_key=86bb17dd8c2449719dd6b498f3431191&sentry_environment=production&sentry_release=734fbcafd1fd393be9aabb922b38ecf77af7d54b
+      etag:
+      - W/"2032ea9dc31a6947d5d8a1e0f06d9363"
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Origin
+      x-24-hour-requests-left:
+      - '581'
+      x-24-hour-usage:
+      - '19'
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - ALLOWALL
+      x-hourly-requests-left:
+      - '197'
+      x-hourly-usage:
+      - '3'
+      x-http-request-id:
+      - '-5739621263842698022'
+      x-minute-requests-left:
+      - '47'
+      x-minute-usage:
+      - '3'
+      x-rate-limit-24-hour:
+      - '600'
+      x-rate-limit-hourly:
+      - '200'
+      x-rate-limit-minute:
+      - '50'
+      x-request-id:
+      - eeec9905-365d-43ee-85f3-2a7a841fe759
+      x-runtime:
+      - '0.052815'
+      x-transaction-id:
+      - 6fdcaf49-4e40-48fc-9079-62d39fce5010
     status:
       code: 200
       message: OK
