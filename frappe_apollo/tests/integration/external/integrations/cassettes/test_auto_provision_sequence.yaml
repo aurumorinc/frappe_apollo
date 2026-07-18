@@ -1,0 +1,101 @@
+interactions:
+- request:
+    body: '{"name": "CAD-2026-00002", "nodes": [], "connections": {}, "settings":
+      {}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '74'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+      X-N8N-API-KEY:
+      - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjM5MTM3ZS0wMDNiLTRmNTktOTY5OC01YzgwYTBhOTFkZjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiNmM3OWZkMWQtOWE3MS00MzRlLWJjYTMtZTdlZTczYThhMmYwIiwiaWF0IjoxNzgzODE3NTcyfQ.5qdDa_j445ppUXDvKF5Z7_SthaLHkoKp1lZpOH9TgRA
+    method: POST
+    uri: https://n8n.capybaara.com/api/v1/workflows
+  response:
+    body:
+      string: '{"name":"CAD-2026-00002","nodes":[],"connections":{},"settings":{"callerPolicy":"workflowsFromSameOwner","availableInMCP":false},"active":false,"versionId":"03eb92be-7fe2-470b-98aa-c6fbdacc2ee6","id":"Orj5uH94QjS1MBkI","description":null,"staticData":null,"meta":null,"pinData":null,"activeVersionId":null,"updatedAt":"2026-07-18T00:52:07.272Z","createdAt":"2026-07-18T00:52:07.272Z","isArchived":false,"versionCounter":1,"triggerCount":0}'
+    headers:
+      CF-RAY:
+      - a1cd80783b07ff6e-BOM
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - zstd
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 18 Jul 2026 00:52:07 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=6Iahu%2B0ZWJ3As%2FOFHWDmvgUNaJ3mmqoGQjrslM%2Bq5y%2B1%2BgZ2FbfxG48FfWhFnQrEPTpi8q2H3qf%2Bbm5KHPfUvF%2F38bCUhSCkMOZ%2BVIzPh9UTgeYLeoIgOdwhv59Wmt%2BR3owehA%3D%3D"}]}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      alt-svc:
+      - h3=":443"; ma=86400
+      cf-cache-status:
+      - DYNAMIC
+      etag:
+      - W/"1b7-G1KOB5OZGlttn43xT2WunF+ltxc"
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"destinationProjectId": "nmh3gteV3JCn1t9B"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.34.2
+      X-N8N-API-KEY:
+      - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjM5MTM3ZS0wMDNiLTRmNTktOTY5OC01YzgwYTBhOTFkZjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiNmM3OWZkMWQtOWE3MS00MzRlLWJjYTMtZTdlZTczYThhMmYwIiwiaWF0IjoxNzgzODE3NTcyfQ.5qdDa_j445ppUXDvKF5Z7_SthaLHkoKp1lZpOH9TgRA
+    method: PUT
+    uri: https://n8n.capybaara.com/api/v1/workflows/Orj5uH94QjS1MBkI/transfer
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - a1cd8079bd733ce8-BOM
+      Connection:
+      - keep-alive
+      Date:
+      - Sat, 18 Jul 2026 00:52:07 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=pnhaEhbzuqsIaixeWtSodSQrRI73PnT%2FzTWkIji5fyfcGhQPssI%2FnmlRVoNuRTpkXvbeouy8CTr5JtJUtSLI8qMhsD9h2C3itZhsewH%2BOiSeL7aocGgjPnzVHThbjS%2BAqGIcCA%3D%3D"}]}'
+      Server:
+      - cloudflare
+      alt-svc:
+      - h3=":443"; ma=86400
+      cf-cache-status:
+      - DYNAMIC
+      via:
+      - 1.1 google
+    status:
+      code: 204
+      message: No Content
+version: 1

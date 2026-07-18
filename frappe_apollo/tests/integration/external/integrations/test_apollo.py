@@ -30,6 +30,15 @@ class TestApolloExternalAPI(unittest.TestCase):
 			
 		cls.client = ApolloClient(cls.account_name)
 
+	@classmethod
+	def tearDownClass(cls):
+		frappe.db.rollback()
+		super().tearDownClass()
+
+	def tearDown(self):
+		frappe.db.rollback()
+		super().tearDown()
+
 	@my_vcr.use_cassette('test_get_email_accounts.yaml')
 	def test_get_email_accounts_live(self):
 		response = self.client.get_email_accounts()
@@ -101,3 +110,32 @@ class TestApolloExternalAPI(unittest.TestCase):
 		
 		# Assert
 		self.assertIn("contacts", response)
+
+	@my_vcr.use_cassette('test_create_sequence.yaml')
+	def test_create_sequence_live(self):
+		import os
+		if not frappe.conf.get("apollo_test_account") and not os.environ.get("APOLLO_TEST_ACCOUNT"):
+			if not os.path.exists(os.path.join(os.path.dirname(__file__), 'cassettes', 'test_create_sequence.yaml')):
+				self.skipTest("No credentials and no cassette found for this test.")
+
+		sequence_name = "Test External Sequence VCR"
+		sequence_id = self.client.create_sequence(sequence_name)
+		self.assertIsNotNone(sequence_id)
+
+	@my_vcr.use_cassette('test_update_sequence.yaml')
+	def test_update_sequence_live(self):
+		import os
+		if not frappe.conf.get("apollo_test_account") and not os.environ.get("APOLLO_TEST_ACCOUNT"):
+			if not os.path.exists(os.path.join(os.path.dirname(__file__), 'cassettes', 'test_update_sequence.yaml')):
+				self.skipTest("No credentials and no cassette found for this test.")
+
+		# Setup: Create a sequence to update
+		sequence_id = self.client.create_sequence("Test External Sequence Update VCR")
+		self.assertIsNotNone(sequence_id)
+		
+		# Act: Update the sequence
+		payload = {"emailer_steps": []}
+		response = self.client.update_sequence(sequence_id, payload)
+		
+		# Assert
+		self.assertIn("emailer_campaign", response)
