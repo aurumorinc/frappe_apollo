@@ -22,3 +22,11 @@ class Account(Document):
 		url = f"https://app.apollo.io/#/oauth/authorize?client_id={self.client_id}&redirect_uri={redirect_uri}&response_type=code&state={self.name}"
 		return url
 
+	@frappe.whitelist()
+	def clear_tokens(self):
+		self.access_token = None
+		self.refresh_token = None
+		self.expired = None
+		self.status = "Unauthorized"
+		self.save()
+

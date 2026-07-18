@@ -8,11 +8,13 @@
  "engine": "InnoDB",
  "field_order": [
   "account_name",
+  "status",
   "api_key",
   "client_id",
   "client_secret",
   "refresh_token",
   "access_token",
+  "expired",
   "webhook_bearer_token"
  ],
  "fields": [
@@ -60,6 +62,12 @@
    "label": "Status",
    "options": "Authorized\nUnauthorized",
    "default": "Unauthorized"
+  },
+  {
+   "fieldname": "expired",
+   "fieldtype": "Datetime",
+   "label": "Expired",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
