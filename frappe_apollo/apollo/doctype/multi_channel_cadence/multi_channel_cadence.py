@@ -6,24 +6,34 @@ def before_save(doc, method=None):
 	"""
 	Load balances Apollo accounts and sequence IDs for a given sender on a Multi Channel Cadence.
 	"""
-	if not doc.provider or "Apollo" not in doc.provider:
+	if not doc.provider or "Apollo" not in [p.cadence_provider for p in doc.get("provider", [])]:
 		return
 
 	if not doc.sender:
 		return
 
-	if doc.apollo_account and doc.apollo_sequence_id:
-		return
-		
-	if not doc.cadence:
+	if not doc.cadence_name:
 		return
 
-	cadence = frappe.get_doc("Cadence", doc.cadence)
+	cadence = frappe.get_doc("Cadence", doc.cadence_name)
 	
 	active_mappings = [
-		row for row in cadence.apollo_ids
+		row for row in cadence.get("apollo_ids", [])
 		if row.sender == doc.sender and row.status == "Active" and row.apollo_id
 	]
+	
+	if doc.apollo_account and doc.apollo_sequence_id:
+		# If it's a Draft, re-verify the mapping is still valid
+		if doc.status == "Draft":
+			is_valid = any(
+				m.account == doc.apollo_account and m.apollo_id == doc.apollo_sequence_id
+				for m in active_mappings
+			)
+			if is_valid:
+				return
+			# If invalid, it falls through to re-assignment
+		else:
+			return
 	
 	if not active_mappings:
 		return
@@ -66,33 +76,42 @@ def on_update(doc, method=None):
 	if doc.get_doc_before_save() and doc.get_doc_before_save().status == "Draft" and doc.status == "Scheduled":
 		frappe.enqueue(
 			method="frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence.add_a_contact_to_sequence",
-			queue="medium",
+			queue="short",
 			mcc_name=doc.name
 		)
 
 def add_a_contact_to_sequence(mcc_name):
 	frappe.enqueue(
 		method="frappe_apollo.apollo.doctype.crm_lead.crm_lead._create_a_contact",
-		queue="medium",
+		queue="short",
 		mcc_name=mcc_name
 	)
 	frappe.enqueue(
 		method="frappe_apollo.apollo.doctype.multi_channel_cadence.multi_channel_cadence._assign_contact_to_sequence",
-		queue="medium",
+		queue="short",
 		mcc_name=mcc_name
 	)
 
 def _assign_contact_to_sequence(mcc_name):
 	from frappe_apollo.integrations.apollo import ApolloClient
+	print("DEBUG _assign: ApolloClient is", ApolloClient)
 	
 	mcc = frappe.get_doc("Multi Channel Cadence", mcc_name)
+	
+	# Fail fast if status changed
+	if mcc.status not in ["Scheduled", "In Progress", "Active"]:
+		return
+
 	if not mcc.apollo_account or not mcc.apollo_sequence_id:
 		wait_for_event(
-			event_key=f"doc:Cadence:on_update:{mcc.cadence}",
+			event_key=f"doc:Cadence:on_update:{mcc.cadence_name}",
 			condition=f"any(row.get('sender') == '{mcc.sender}' and row.get('status') == 'Active' and row.get('apollo_id') for row in argument.get('apollo_ids', []))",
 			consider_events_since=mcc.modified
 		)
 		mcc.reload()
+		# Re-validate
+		if mcc.status not in ["Scheduled", "In Progress", "Active"]:
+			return
 		mcc.save(ignore_permissions=True)
 		return
 		
@@ -104,6 +123,10 @@ def _assign_contact_to_sequence(mcc_name):
 			event_key="doc:User Email:after_insert",
 			condition=f"argument.get('parent') == '{sender}'"
 		)
+		mcc.reload()
+		if mcc.status not in ["Scheduled", "In Progress", "Active"]:
+			return
+		email_account_name = frappe.db.get_value("User Email", {"parent": sender}, "email_account")
 		
 	email_account = frappe.get_doc("Email Account", email_account_name)
 	if not email_account.get("apollo_ids"):
@@ -126,8 +149,13 @@ def _assign_contact_to_sequence(mcc_name):
 			event_key=f"doc:CRM Lead:on_update:{mcc.recipient}",
 			condition=f"any(row.get('account') == '{account_name}' and row.get('apollo_id') for row in argument.get('apollo_ids', []))"
 		)
+		mcc.reload()
+		if mcc.status not in ["Scheduled", "In Progress", "Active"]:
+			return
 		# refetch
 		crm_lead_accounts = frappe.get_all("CRM Lead Apollo ID", filters={"parent": mcc.recipient, "account": account_name}, fields=["apollo_id"])
+		if not crm_lead_accounts or not crm_lead_accounts[0].get("apollo_id"):
+			return
 
 	contact_apollo_id = crm_lead_accounts[0].apollo_id
 

@@ -1,7 +1,7 @@
 import frappe
 import unittest
 from frappe.tests import IntegrationTestCase
-from frappe_apollo.apollo.doctype.cadence.cadence import provision_sequences_fields_and_steps
+from frappe_apollo.apollo.doctype.cadence.cadence import on_update, _provision_sequence, update_sequence, archive_sequence, _get_sequence_steps
 from frappe_apollo.tests.integration.external.conftest import my_vcr
 import os
 
@@ -113,11 +113,17 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "reference_name": "Test Template",
                 "subject_field": "custom_subject",
                 "message_field": "custom_message"
+            }],
+            "apollo_ids": [{
+                "account": self.account_name,
+                "sender": "Administrator",
+                "status": "Active"
             }]
         }).insert(ignore_permissions=True)
         
         # Act
-        provision_sequences_fields_and_steps(cadence.name)
+        steps = _get_sequence_steps(cadence.name)
+        _provision_sequence(cadence.name, self.account_name, "Administrator", emailer_steps=steps)
         
         # Reload Cadence to verify apollo_ids were set
         cadence.reload()
@@ -163,7 +169,9 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
             "message_field": "custom_message2"
         })
         cadence.save(ignore_permissions=True)
-        provision_sequences_fields_and_steps(cadence.name)
+        
+        steps = _get_sequence_steps(cadence.name)
+        _provision_sequence(cadence.name, self.account_name, "Administrator", emailer_steps=steps)
         
         seq_res_updated = client.search_sequences(q_name="Test VCR Provisioning Cadence - Administrator")
         campaigns_updated = seq_res_updated.get("emailer_campaigns", [])
@@ -175,8 +183,8 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
         cadence.reload()
         cadence.enabled = 0
         cadence.save(ignore_permissions=True)
-        from frappe_apollo.apollo.doctype.cadence.cadence import update_sequences
-        update_sequences(cadence.name, cadence.enabled)
+        
+        update_sequence(cadence.name, self.account_name, cadence.enabled)
         
         seq_res = client.search_sequences(q_name="Test VCR Provisioning Cadence - Administrator")
         self.assertFalse(seq_res.get("emailer_campaigns", [{}])[0].get("active"))
@@ -184,16 +192,17 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
         cadence.reload()
         cadence.enabled = 1
         cadence.save(ignore_permissions=True)
-        update_sequences(cadence.name, cadence.enabled)
+        update_sequence(cadence.name, self.account_name, cadence.enabled)
         
         seq_res = client.search_sequences(q_name="Test VCR Provisioning Cadence - Administrator")
         self.assertTrue(seq_res.get("emailer_campaigns", [{}])[0].get("active"))
 
         # Test Deletion/Archive
-        from frappe_apollo.apollo.doctype.cadence.cadence import archive_sequences
+        cadence.reload()
         apollo_ids_data = [{"account": row.account, "apollo_id": row.apollo_id} for row in cadence.apollo_ids]
         cadence.delete()
-        archive_sequences(apollo_ids_data)
+        for data in apollo_ids_data:
+            archive_sequence(data["account"], data["apollo_id"])
         
         seq_res = client.search_sequences(q_name="Test VCR Provisioning Cadence - Administrator")
         # Apollo's search might not return archived sequences, or it might.

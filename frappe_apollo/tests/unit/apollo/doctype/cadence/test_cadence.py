@@ -1,42 +1,123 @@
 import frappe
 from frappe.tests import UnitTestCase
-from frappe_apollo.apollo.doctype.cadence.cadence import _provision_sequences, _get_sequence_steps
-from unittest.mock import patch, MagicMock
+from frappe_apollo.apollo.doctype.cadence.cadence import _provision_sequence, _get_sequence_steps, on_update
+from unittest.mock import patch, MagicMock, call
+from frappe_controller.utils.controller import SuspendJob
 
 class TestCadenceProvisioning(UnitTestCase):
+    @patch("frappe_apollo.apollo.doctype.cadence.cadence.enqueue")
+    @patch("frappe_apollo.apollo.doctype.cadence.cadence._get_sequence_steps")
+    @patch("frappe.get_attr")
+    def test_on_update_enqueues_granular_jobs(self, mock_get_attr, mock_get_steps, mock_enqueue):
+        mock_get_steps.return_value = [{"step": 1}]
+        
+        doc = MagicMock()
+        doc.name = "Test Cadence"
+        doc.has_value_changed.return_value = False
+        
+        row1 = MagicMock()
+        row1.account = "Acc1"
+        row1.sender = "Sender1"
+        row2 = MagicMock()
+        row2.account = "Acc2"
+        row2.sender = "Sender2"
+        
+        doc.get.return_value = [row1, row2]
+        
+        mock_enqueue_field = MagicMock()
+        mock_get_attr.return_value = mock_enqueue_field
+        
+        on_update(doc)
+        
+        # Verify granular jobs were queued for each apollo_id
+        mock_enqueue.assert_has_calls([
+            call(
+                "frappe_apollo.apollo.doctype.cadence.cadence._provision_sequence",
+                queue="low",
+                cadence_name="Test Cadence",
+                account_name="Acc1",
+                sender="Sender1",
+                emailer_steps=[{"step": 1}]
+            ),
+            call(
+                "frappe_apollo.apollo.doctype.cadence.cadence._provision_sequence",
+                queue="low",
+                cadence_name="Test Cadence",
+                account_name="Acc2",
+                sender="Sender2",
+                emailer_steps=[{"step": 1}]
+            )
+        ])
+        
+        mock_enqueue_field.assert_has_calls([
+            call("Test Cadence", "Acc1", "Sender1"),
+            call("Test Cadence", "Acc2", "Sender2")
+        ])
+
     @patch("frappe_apollo.apollo.doctype.cadence.cadence.ApolloClient")
     @patch("frappe.get_doc")
-    @patch("frappe.get_all")
-    def test_provision_sequences(self, mock_get_all, mock_get_doc, mock_client_cls):
+    @patch("frappe.db.get_value")
+    @patch("frappe_controller.utils.controller.wait_for_event")
+    def test_provision_sequence_fail_fast_if_unauthorized(self, mock_wait_for_event, mock_db_get_value, mock_get_doc, mock_client_cls):
         mock_cadence = MagicMock()
         mock_cadence.cadence_name = "Test Cadence"
-        mock_user = MagicMock()
-        mock_user.user = "test@example.com"
-        mock_cadence.users = [mock_user]
-        mock_cadence.get.return_value = [mock_user]
-        mock_cadence.apollo_ids = []
         
+        row1 = MagicMock()
+        row1.account = "Acc1"
+        row1.sender = "Sender1"
+        row1.apollo_id = None
+        
+        mock_cadence.get.return_value = [row1]
         mock_get_doc.return_value = mock_cadence
-        mock_get_all.return_value = ["Account1"]
+        
+        # First call: Provider disabled -> calls wait_for_event
+        mock_db_get_value.side_effect = lambda dt, name, field: 0 if dt == "Cadence Provider" else "Unauthorized"
+        
+        # After resumption, simulate that row is removed!
+        def side_effect_reload():
+            mock_cadence.get.return_value = [] # Row removed
+        mock_cadence.reload.side_effect = side_effect_reload
+        
+        _provision_sequence("Cad1", "Acc1", "Sender1", emailer_steps=[])
+        
+        mock_wait_for_event.assert_called_once()
+        mock_cadence.reload.assert_called_once()
+        # Client not instantiated because of fail-fast return
+        mock_client_cls.assert_not_called()
+
+    @patch("frappe_apollo.apollo.doctype.cadence.cadence.ApolloClient")
+    @patch("frappe.get_doc")
+    @patch("frappe.db.get_value")
+    @patch("frappe.db.set_value")
+    def test_provision_sequence_creates_new(self, mock_set_value, mock_db_get_value, mock_get_doc, mock_client_cls):
+        mock_cadence = MagicMock()
+        mock_cadence.cadence_name = "Test Cadence"
+        
+        row1 = MagicMock()
+        row1.account = "Acc1"
+        row1.sender = "Sender1"
+        row1.apollo_id = None
+        row1.doctype = "Cadence Apollo ID"
+        row1.name = "row1"
+        
+        mock_cadence.get.return_value = [row1]
+        mock_get_doc.return_value = mock_cadence
+        
+        # Authorized
+        mock_db_get_value.side_effect = lambda dt, name, field: 1 if dt == "Cadence Provider" else "Authorized"
         
         mock_client = mock_client_cls.return_value
         mock_client.create_sequence.return_value = "seq_123"
         
-        _provision_sequences("Cad1", emailer_steps=[])
+        _provision_sequence("Cad1", "Acc1", "Sender1", emailer_steps=[])
         
         mock_client.create_sequence.assert_called_once_with(
-            name="Test Cadence - test@example.com",
+            name="Test Cadence - Sender1",
             permissions="team_can_use",
             active=True,
             emailer_steps=[]
         )
-        mock_cadence.append.assert_called_once_with("apollo_ids", {
-            "account": "Account1",
-            "sender": "test@example.com",
-            "apollo_id": "seq_123",
-            "status": "Active"
-        })
-        mock_cadence.save.assert_called_once_with(ignore_permissions=True)
+        mock_set_value.assert_called_once_with("Cadence Apollo ID", "row1", "apollo_id", "seq_123")
 
     @patch("frappe.get_doc")
     def test_get_sequence_steps(self, mock_get_doc):
@@ -66,11 +147,6 @@ class TestCadenceProvisioning(UnitTestCase):
         mock_get_doc.return_value = mock_cadence
         
         emailer_steps = _get_sequence_steps("Cad1")
-        
-        # Verify accumulated wait
-        # Step1: Wait = 2
-        # Step2: Other channel (wait = 3)
-        # Step3: Email (wait = 1 + 3 = 4)
         
         expected_emailer_steps = [
             {

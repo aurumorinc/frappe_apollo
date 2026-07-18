@@ -32,8 +32,7 @@
    "fieldname": "apollo_id",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Apollo Sequence ID",
-   "reqd": 1
+   "label": "Apollo Sequence ID"
   },
   {
    "default": "Active",
