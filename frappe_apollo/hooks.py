@@ -133,6 +133,10 @@ required_apps = ["frappe_controller", "frappe_cadence", "crm"]
 # Hook on document methods and events
 
 doc_events = {
+	"Cadence": {
+		"on_update": "frappe_apollo.apollo.doctype.cadence.cadence.on_update",
+		"on_trash": "frappe_apollo.apollo.doctype.cadence.cadence.on_trash"
+	},
 	"Cadence Provider": {
 		"on_update": "frappe_apollo.apollo.doctype.cadence_provider.cadence_provider.on_update"
 	},
@@ -171,6 +175,21 @@ controller_events = {
 		"timeout": 300
 	},
 	"frappe_apollo.webhook.process_webhook": {
+		"rate_limit_per_minute": 50,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.cadence.cadence.provision_sequences_fields_and_steps": {
+		"rate_limit_per_minute": 50,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.cadence.cadence.update_sequences": {
+		"rate_limit_per_minute": 50,
+		"retries": 3,
+		"timeout": 300
+	},
+	"frappe_apollo.apollo.doctype.cadence.cadence.archive_sequences": {
 		"rate_limit_per_minute": 50,
 		"retries": 3,
 		"timeout": 300

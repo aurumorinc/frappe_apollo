@@ -38,7 +38,6 @@ class TestEmailAccountIntegration(IntegrationTestCase):
         for acc in accounts:
             frappe.delete_doc("Email Account", acc.name, force=1, ignore_permissions=True)
         frappe.db.sql("DELETE FROM `tabEmail Account Apollo ID`")
-        frappe.db.commit()
 
     def setUp(self):
         super().setUp()

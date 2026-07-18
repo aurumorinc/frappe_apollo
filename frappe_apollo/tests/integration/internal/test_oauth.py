@@ -7,8 +7,9 @@ class TestOAuth(IntegrationTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		
-		frappe.db.sql("DELETE FROM `tabAccount`")
-		frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account'")
+		if frappe.db.exists("Account", "Test Account OAuth"):
+			frappe.delete_doc("Account", "Test Account OAuth", force=1, ignore_permissions=True)
+		frappe.db.sql("DELETE FROM `__Auth` WHERE `doctype` = 'Account' AND `name` = 'Test Account OAuth'")
 		
 		# Create Account
 		if not frappe.db.exists("Account", "Test Account OAuth"):

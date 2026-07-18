@@ -30,6 +30,25 @@ class TestApolloExternalAPI(unittest.TestCase):
 			
 		cls.client = ApolloClient(cls.account_name)
 
+	@classmethod
+	def tearDownClass(cls):
+		frappe.db.rollback()
+		super().tearDownClass()
+
+	def _cleanup_all_sequences(self):
+		res = self.client.search_sequences(per_page=100)
+		sequences = res.get("emailer_campaigns", [])
+		for seq in sequences:
+			if not seq.get("archived"):
+				try:
+					self.client.archive_sequence(seq["id"])
+				except Exception:
+					pass
+
+	def tearDown(self):
+		frappe.db.rollback()
+		super().tearDown()
+
 	@my_vcr.use_cassette('test_get_email_accounts.yaml')
 	def test_get_email_accounts_live(self):
 		response = self.client.get_email_accounts()
@@ -101,3 +120,97 @@ class TestApolloExternalAPI(unittest.TestCase):
 		
 		# Assert
 		self.assertIn("contacts", response)
+
+	@my_vcr.use_cassette('test_create_sequence.yaml')
+	def test_create_sequence_live(self):
+		self._cleanup_all_sequences()
+		import os
+		if not frappe.conf.get("apollo_test_account") and not os.environ.get("APOLLO_TEST_ACCOUNT"):
+			if not os.path.exists(os.path.join(os.path.dirname(__file__), 'cassettes', 'test_create_sequence.yaml')):
+				self.skipTest("No credentials and no cassette found for this test.")
+
+		# Ensure fields exist before creating sequence
+		for field in ["subject", "message"]:
+			try:
+				self.client.create_custom_field(field, "string")
+			except Exception:
+				pass
+
+		sequence_name = "Test External Sequence VCR"
+		emailer_steps = [{
+			"type": "auto_email",
+			"wait_time": 1,
+			"wait_mode": "day",
+			"emailer_touches": [{
+				"type": "new_thread",
+				"status": "approved",
+				"include_signature": True,
+				"emailer_template": {
+					"subject": "{{subject}}",
+					"body_html": "{{message}}"
+				}
+			}]
+		}]
+		sequence_id = self.client.create_sequence(sequence_name, emailer_steps=emailer_steps)
+		self.assertIsNotNone(sequence_id)
+		
+		# Teardown
+		try:
+			self.client.archive_sequence(sequence_id)
+		except Exception:
+			pass
+
+	@my_vcr.use_cassette('test_update_sequence.yaml')
+	def test_update_sequence_live(self):
+		self._cleanup_all_sequences()
+		import os
+		if not frappe.conf.get("apollo_test_account") and not os.environ.get("APOLLO_TEST_ACCOUNT"):
+			if not os.path.exists(os.path.join(os.path.dirname(__file__), 'cassettes', 'test_update_sequence.yaml')):
+				self.skipTest("No credentials and no cassette found for this test.")
+
+		# Ensure fields exist before creating sequence
+		for field in ["subject_update", "message_update"]:
+			try:
+				self.client.create_custom_field(field, "string")
+			except Exception:
+				pass
+
+		# Setup: Create a sequence to update
+		sequence_id = self.client.create_sequence("Test External Sequence Update VCR")
+		self.assertIsNotNone(sequence_id)
+		
+		# Act: Update the sequence
+		emailer_steps = [{
+			"position": 1,
+			"type": "auto_email",
+			"wait_time": 1,
+			"wait_mode": "day",
+			"emailer_touches": [{
+				"type": "new_thread",
+				"status": "approved",
+				"include_signature": True,
+				"emailer_template": {
+					"subject": "{{subject_update}}",
+					"body_html": "{{message_update}}"
+				}
+			}]
+		}]
+		payload = {"emailer_steps": emailer_steps}
+		response = self.client.update_sequence(sequence_id, payload)
+		
+		# Assert
+		self.assertIn("emailer_campaign", response)
+		updated_steps = response.get("emailer_campaign", {}).get("emailer_steps", [])
+		self.assertEqual(len(updated_steps), 1, "Steps should be updated in the sequence")
+		
+		# Check touches
+		touches = response.get("emailer_touches", [])
+		self.assertEqual(len(touches), 1, "Email touches should be present in the response")
+		self.assertEqual(touches[0].get("status"), "approved", "Touch status should be approved")
+		self.assertEqual(touches[0].get("type"), "new_thread", "Touch type should be new_thread")
+
+		# Teardown
+		try:
+			self.client.archive_sequence(sequence_id)
+		except Exception:
+			pass
