@@ -36,10 +36,10 @@ def update_a_contact(comm_name):
 		)
 		
 	account = frappe.get_doc("Account", account_name)
-	if account.status != "Active":
+	if account.status != "Authorized":
 		wait_for_event(
 			event_key="doc:Account:on_update",
-			condition=f"argument.get('name') == '{account_name}' and argument.get('status') == 'Active'"
+			condition=f"argument.get('name') == '{account_name}' and argument.get('status') == 'Authorized'"
 		)
 		
 	crm_lead_accounts = frappe.get_all("CRM Lead Apollo ID", filters={"parent": mcc.recipient, "account": account_name}, fields=["apollo_id"])
