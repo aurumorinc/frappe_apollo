@@ -85,21 +85,21 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "name": "Test Template",
                 "subject": "Test",
                 "response": "Test"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         if not frappe.db.exists("Field", "custom_subject"):
             frappe.get_doc({
                 "doctype": "Field",
                 "name": "custom_subject",
                 "label": "custom_subject"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         if not frappe.db.exists("Field", "custom_message"):
             frappe.get_doc({
                 "doctype": "Field",
                 "name": "custom_message",
                 "label": "custom_message"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         # Create a Cadence doc with subject_field/message_field containing prefix
         cadence = frappe.get_doc({
@@ -121,7 +121,7 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "sender": "Administrator",
                 "status": "Active"
             }]
-        }).insert(ignore_permissions=True)
+        }).insert(ignore_permissions=True, ignore_mandatory=True)
         
         # Act
         steps = _get_sequence_steps(cadence.name)
@@ -153,14 +153,14 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "doctype": "Field",
                 "name": "custom_subject2",
                 "label": "custom_subject2"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         if not frappe.db.exists("Field", "custom_message2"):
             frappe.get_doc({
                 "doctype": "Field",
                 "name": "custom_message2",
                 "label": "custom_message2"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         cadence.reload()
         cadence.append("cadence_schedules", {
