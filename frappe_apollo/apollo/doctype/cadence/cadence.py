@@ -74,7 +74,7 @@ def _provision_sequences(cadence_name, emailer_steps=None):
 		# Need to find an active Apollo Account for this sender
 		# Depending on the setup, an Account doc maps a frappe user to apollo
 		# Let's search for Account records
-		account_names = frappe.get_all("Account", filters={"status": "Active"}, pluck="name")
+		account_names = frappe.get_all("Account", filters={"status": "Authorized"}, pluck="name")
 		if not account_names:
 			continue
 			

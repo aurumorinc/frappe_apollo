@@ -11,6 +11,7 @@ class TestApolloClient(UnitTestCase):
         mock_account = MagicMock()
         mock_account.api_key = "test_key"
         mock_account.access_token = None
+        mock_account.refresh_token = None
         mock_get_doc.return_value = mock_account
 
         client = ApolloClient("Test Account")
@@ -23,6 +24,7 @@ class TestApolloClient(UnitTestCase):
     def test_get_headers_oauth(self, mock_get_doc):
         mock_account = MagicMock()
         mock_account.api_key = None
+        mock_account.refresh_token = None
         mock_account.access_token = "some_token"
         mock_account.get_password.return_value = "actual_token_value"
         mock_get_doc.return_value = mock_account
@@ -39,6 +41,7 @@ class TestApolloClient(UnitTestCase):
     def test_rate_limit_error(self, mock_request, mock_get_doc):
         mock_account = MagicMock()
         mock_account.api_key = "key"
+        mock_account.refresh_token = None
         mock_get_doc.return_value = mock_account
 
         mock_response = MagicMock()
@@ -57,7 +60,9 @@ class TestApolloClient(UnitTestCase):
         mock_account.api_key = None
         mock_account.access_token = "old"
         mock_account.refresh_token = "refresh"
+        mock_account.expired = None
         mock_account.get_password.return_value = "old"
+        mock_account.get.return_value = None
         mock_get_doc.return_value = mock_account
 
         # First request returns 401, second returns 200
@@ -82,6 +87,7 @@ class TestApolloClient(UnitTestCase):
     @patch("frappe_apollo.integrations.apollo.requests.request")
     def test_fallback_logic_add_contacts(self, mock_request, mock_get_doc):
         mock_account = MagicMock()
+        mock_account.refresh_token = None
         mock_get_doc.return_value = mock_account
 
         # Simulate 422 error on first call

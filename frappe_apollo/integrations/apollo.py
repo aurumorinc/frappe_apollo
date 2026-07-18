@@ -90,6 +90,9 @@ class ApolloClient:
 		return self._request("POST", endpoint, json=payload)
 
 	def _request(self, method, endpoint, **kwargs):
+		if self.account.refresh_token and self.account.get("expired") and self.account.get("expired") < frappe.utils.now_datetime():
+			self._refresh_oauth_token()
+			
 		url = f"{self.base_url}{endpoint}"
 		headers = self._get_headers()
 		
@@ -132,5 +135,11 @@ class ApolloClient:
 		
 		self.account.access_token = data.get("access_token")
 		self.account.refresh_token = data.get("refresh_token")
+		
+		expires_in = data.get("expires_in")
+		if expires_in:
+			self.account.expired = frappe.utils.add_to_date(frappe.utils.now_datetime(), seconds=int(expires_in))
+			
+		self.account.status = "Authorized"
 		self.account.save(ignore_permissions=True)
 		frappe.db.commit()

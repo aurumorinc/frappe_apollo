@@ -17,7 +17,7 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                     "doctype": "Account",
                     "account_name": cls.account_name,
                     "api_key": "dummy_api_key_for_vcr",
-                    "status": "Active"
+                    "status": "Authorized"
                 }).insert()
                 
         if not frappe.db.exists("Account", cls.account_name):
@@ -25,6 +25,11 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
             
         # Ensure Cadence Provider is enabled
         frappe.db.set_value("Cadence Provider", "Apollo", "enabled", 1)
+        
+        # Disable other accounts so they don't interfere
+        for acc in frappe.get_all("Account", filters={"name": ["!=", cls.account_name]}):
+            frappe.db.set_value("Account", acc.name, "status", "Unauthorized")
+        frappe.db.set_value("Account", cls.account_name, "status", "Authorized")
 
     @classmethod
     def tearDownClass(cls):
