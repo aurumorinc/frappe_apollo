@@ -58,8 +58,8 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Active\nUnauthorized",
-   "default": "Active"
+   "options": "Authorized\nUnauthorized",
+   "default": "Unauthorized"
   }
  ],
  "index_web_pages_for_search": 1,
