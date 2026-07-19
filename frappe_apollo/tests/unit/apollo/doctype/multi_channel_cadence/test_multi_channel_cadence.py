@@ -10,11 +10,11 @@ class TestMultiChannelCadence(UnitTestCase):
     def test_before_save_ignores_missing_apollo_id(self, mock_get_all, mock_get_doc):
         # MCC setup
         mcc = MagicMock()
-        mcc.get.side_effect = lambda k, d=[]: [MagicMock(provider="Apollo")] if k == "provider" else d
+        mcc.get.side_effect = lambda k, d=[]: [MagicMock(cadence_provider="Apollo")] if k == "provider" else d
         mcc.sender = "user@example.com"
         mcc.apollo_account = None
         mcc.apollo_sequence_id = None
-        mcc.cadence = "Cad1"
+        mcc.cadence_name = "Cad1"
         mcc.status = "Draft"
         
         # Cadence setup
@@ -37,11 +37,11 @@ class TestMultiChannelCadence(UnitTestCase):
     def test_before_save_reassigns_if_draft_and_invalid(self, mock_get_all, mock_get_doc):
         # MCC setup
         mcc = MagicMock()
-        mcc.get.side_effect = lambda k, d=[]: [MagicMock(provider="Apollo")] if k == "provider" else d
+        mcc.get.side_effect = lambda k, d=[]: [MagicMock(cadence_provider="Apollo")] if k == "provider" else d
         mcc.sender = "user@example.com"
         mcc.apollo_account = "Acc_Old"
         mcc.apollo_sequence_id = "seq_old"
-        mcc.cadence = "Cad1"
+        mcc.cadence_name = "Cad1"
         mcc.status = "Draft"
         
         mock_cadence = MagicMock()

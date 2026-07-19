@@ -12,29 +12,31 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
         cls.account_name = frappe.conf.get("apollo_test_account") or os.environ.get("APOLLO_TEST_ACCOUNT")
         if not cls.account_name:
             cls.account_name = "Dummy VCR Account"
-            if not frappe.db.exists("Account", cls.account_name):
-                frappe.get_doc({
-                    "doctype": "Account",
-                    "account_name": cls.account_name,
-                    "api_key": "dummy_api_key_for_vcr",
-                    "status": "Authorized"
-                }).insert()
-                
-        if not frappe.db.exists("Account", cls.account_name):
-            raise unittest.SkipTest(f"Account '{cls.account_name}' not found in database. Skipping external tests.")
-            
-        # Ensure Cadence Provider is enabled
-        frappe.db.set_value("Cadence Provider", "Apollo", "enabled", 1)
-        
-        # Disable other accounts so they don't interfere
-        for acc in frappe.get_all("Account", filters={"name": ["!=", cls.account_name]}):
-            frappe.db.set_value("Account", acc.name, "status", "Unauthorized")
-        frappe.db.set_value("Account", cls.account_name, "status", "Authorized")
 
     @classmethod
     def tearDownClass(cls):
         frappe.db.rollback()
         super().tearDownClass()
+
+    def setUp(self):
+        super().setUp()
+        if self.account_name == "Dummy VCR Account" and not frappe.db.exists("Account", self.account_name):
+            frappe.get_doc({
+                "doctype": "Account",
+                "account_name": self.account_name,
+                "api_key": "dummy_api_key_for_vcr",
+                "client_id": "dummy_client_id",
+                "client_secret": "dummy_client_secret",
+                "status": "Authorized"
+            }).insert()
+            
+        # Ensure Cadence Provider is enabled
+        frappe.db.set_value("Cadence Provider", "Apollo", "enabled", 1)
+        
+        # Disable other accounts so they don't interfere
+        for acc in frappe.get_all("Account", filters={"name": ["!=", self.account_name]}):
+            frappe.db.set_value("Account", acc.name, "status", "Unauthorized")
+        frappe.db.set_value("Account", self.account_name, "status", "Authorized")
 
     def tearDown(self):
         frappe.db.rollback()
@@ -83,21 +85,21 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "name": "Test Template",
                 "subject": "Test",
                 "response": "Test"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         if not frappe.db.exists("Field", "custom_subject"):
             frappe.get_doc({
                 "doctype": "Field",
                 "name": "custom_subject",
                 "label": "custom_subject"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         if not frappe.db.exists("Field", "custom_message"):
             frappe.get_doc({
                 "doctype": "Field",
                 "name": "custom_message",
                 "label": "custom_message"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         # Create a Cadence doc with subject_field/message_field containing prefix
         cadence = frappe.get_doc({
@@ -119,7 +121,7 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "sender": "Administrator",
                 "status": "Active"
             }]
-        }).insert(ignore_permissions=True)
+        }).insert(ignore_permissions=True, ignore_mandatory=True)
         
         # Act
         steps = _get_sequence_steps(cadence.name)
@@ -151,14 +153,14 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
                 "doctype": "Field",
                 "name": "custom_subject2",
                 "label": "custom_subject2"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         if not frappe.db.exists("Field", "custom_message2"):
             frappe.get_doc({
                 "doctype": "Field",
                 "name": "custom_message2",
                 "label": "custom_message2"
-            }).insert(ignore_permissions=True)
+            }).insert(ignore_permissions=True, ignore_mandatory=True)
 
         cadence.reload()
         cadence.append("cadence_schedules", {
@@ -212,15 +214,3 @@ class TestCadenceProvisioningExternal(IntegrationTestCase):
             self.assertTrue(campaigns[0].get("archived"))
         else:
             self.assertEqual(len(campaigns), 0)
-        
-        # Cleanup DB
-        cadences = frappe.get_all("Cadence", filters={"cadence_name": ["like", "Test VCR Provisioning Cadence%"]}, pluck="name")
-        for c in cadences:
-            frappe.delete_doc("Cadence", c, ignore_permissions=True)
-            
-        frappe.delete_doc("Email Template", "Test Template", ignore_permissions=True, force=True)
-        frappe.delete_doc("Field", "custom_subject", ignore_permissions=True, force=True)
-        frappe.delete_doc("Field", "custom_message", ignore_permissions=True, force=True)
-        frappe.delete_doc("Field", "custom_subject2", ignore_permissions=True, force=True)
-        frappe.delete_doc("Field", "custom_message2", ignore_permissions=True, force=True)
-        frappe.db.commit()

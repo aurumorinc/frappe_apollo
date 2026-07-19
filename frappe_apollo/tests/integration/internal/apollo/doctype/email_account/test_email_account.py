@@ -5,16 +5,14 @@ from frappe_apollo.apollo.doctype.email_account.email_account import queue_get_e
 
 class TestEmailAccountIntegration(IntegrationTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        if frappe.db.exists("Account", "Mailbox Test Account"):
-            frappe.delete_doc("Account", "Mailbox Test Account", force=1, ignore_permissions=True)
-        if frappe.db.exists("Account", "Another Test Account"):
-            frappe.delete_doc("Account", "Another Test Account", force=1, ignore_permissions=True)
-            
-        frappe.db.sql("DELETE FROM `tabAccount` WHERE name IN ('Mailbox Test Account', 'Another Test Account')")
-        cls._cleanup_email_accounts()
+    def tearDownClass(cls):
+        frappe.db.rollback()
+        super().tearDownClass()
+
+    def setUp(self):
+        super().setUp()
         
+        # Setup accounts inside transaction so they rollback automatically
         frappe.get_doc({
             "doctype": "Account",
             "account_name": "Mailbox Test Account",
@@ -27,24 +25,8 @@ class TestEmailAccountIntegration(IntegrationTestCase):
             "api_key": "some_key"
         }).insert(ignore_permissions=True)
 
-    @classmethod
-    def tearDownClass(cls):
-        frappe.db.rollback()
-        super().tearDownClass()
-
-    @classmethod
-    def _cleanup_email_accounts(cls):
-        accounts = frappe.get_all("Email Account", filters={"email_id": ["in", ("test1@example.com", "test2@example.com")]})
-        for acc in accounts:
-            frappe.delete_doc("Email Account", acc.name, force=1, ignore_permissions=True)
-        frappe.db.sql("DELETE FROM `tabEmail Account Apollo ID`")
-
-    def setUp(self):
-        super().setUp()
-        self._cleanup_email_accounts()
-
     def tearDown(self):
-        self._cleanup_email_accounts()
+        frappe.db.rollback()
         super().tearDown()
 
     @patch("frappe.enqueue")
