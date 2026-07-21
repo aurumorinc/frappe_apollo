@@ -286,7 +286,7 @@
   "fieldtype": "Tab Break",
   "label": "Integrations",
   "name": "Cadence-integrations_tab",
-  "insert_after": "",
+  "insert_after": "last_user",
   "hidden": 0
  },
  {
